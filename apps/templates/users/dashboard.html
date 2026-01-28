@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}داشبورد حساب کاربری{% endblock %}
+
+{% block content %}
+    <h1>پروفایل</h1>
+    <hr>
+    <h2>ایمیل خود را در اینجا تغییر دهید:</h2>
+    <form action="" method="post" novalidate="novalidate">
+        {{ form.csrf_token }}
+        ایمیل: {{ form.email }}
+        <br>
+        <input type="submit" value="Update" class="button-customized">
+    </form>
+    <hr>
+    <a href="{{ url_for('users.update_password') }}" class="float-right">تغییر رمز عبور</a>
+    <a href="{{ url_for('users.logout') }}" class="float-right">خروج از حساب کاربری</a>
+{% endblock %}

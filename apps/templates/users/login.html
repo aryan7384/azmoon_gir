@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{{ url_for('users.login') }}" method="post" novalidate="novalidate">
+        {{ form.csrf_token }}
+        نام کاربری:
+        {{ form.username }}
+        <br />
+        رمز عبور:
+        {{ form.password }}
+        <br />
+        بار بعدی که وارد شدم من را به یاد بیاور
+        {{ form.remember_me }}
+        <br />
+        <input type="submit" value="ورود"  class="button-customized"/>
+        <br>
+    </form>
+    <a href="{{ url_for("users.forgot_password") }}" class="float-right">رمز عبور خود را فراموش کرده اید؟</a>
+{% endblock %}

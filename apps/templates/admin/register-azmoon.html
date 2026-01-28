@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت ازمون جدید</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+<h1>ثبت آزمون جدید</h1>
+<a href="{{ url_for('admin.admin_homepage') }}">بازگشت به منوی قبل</a>
+{% include 'form-errors.html' %}
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    نام آزمون: {{ form.name }}
+    <br>
+    نام کاربری افرادی را که میخواهید ازمون برای آنها فعال شود را بنویسید و هر کدام را با اینتر جدا کنید:
+    {{ form.users }}
+    <br>
+    <input type="submit" value="ثبت آزمون">
+</form>
+</body>
+</html>

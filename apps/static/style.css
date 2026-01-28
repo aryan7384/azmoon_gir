@@ -1,0 +1,89 @@
+.alert-success {
+    background-color: black;
+    color: rgb(122, 174, 17);
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(122, 174, 17);
+    border-radius: 3px;
+    padding: 10px;
+    display: inline-block;
+    font-weight: 600;
+    margin: 3px;
+}
+.alert-danger {
+    background-color: black;
+    color: rgb(255, 0, 0);
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(255, 0, 0);
+    border-radius: 3px;
+    padding: 10px;
+    display: inline-block;
+    font-weight: 600;
+    margin: 3px;
+}
+.alert-info {
+    background-color: black;
+    color: rgb(100, 100, 255);
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(100, 100, 255);
+    border-radius: 3px;
+    padding: 10px;
+    display: inline-block;
+    font-weight: 600;
+    margin: 3px;
+}
+.alert-warning {
+    background-color: black;
+    color: rgb(255, 120, 0);
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(255, 120, 0);
+    border-radius: 3px;
+    padding: 10px;
+    display: inline-block;
+    font-weight: 600;
+    margin: 3px;
+}
+nav {
+    display: inline-block;
+    background-color: rgb(0, 170, 170); 
+    padding-left: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+}
+a, .button-customized {
+    text-decoration: none;
+    margin-top: 5px;
+    margin-right: 5px;
+    background-color: white;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    transition: ease-out 200ms;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+}
+
+a:hover, .button-customized:hover {
+    border-color: white;
+    color:white;
+    background-color: black;
+}
+
+.float-right {
+    float: right;
+}
+
+body {
+    font-family: "Exo", sans-serif;
+    background-color: black;
+    color: white;
+    direction: rtl;
+    font-size: 20px;
+}
+
+input {
+     font-family: "Exo", sans-serif;
+}

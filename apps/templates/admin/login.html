@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>صفحه ورود به حساب کاربری</title>
+    <style>
+        body {direction: rtl}
+    </style>
+</head>
+<body>
+<h1>صفحه ورود به حساب کاربری</h1>
+{% include 'flash-messages.html' %}
+<form method="post" action="">
+    {{ form.csrf_token }}
+    رمز عبور:
+    {{ form.password }}
+    <br>
+    <input type="submit" value="ورود">
+</form>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}آزمون{% endblock title %}
+
+{% block content %}
+<form action="" method="post">
+    {% include 'flash-messages.html' %}
+
+    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+    
+    <div>
+    {% for question in zip(Q.query.filter_by(azmoon_id = azmoon.id).all()|shuffle,
+        range(1, len_(Q.query.filter_by(azmoon_id = azmoon.id).all()) + 1)) %}
+    <p>{{ question[1] }}. {{ question[0].title }}</p>
+
+    <div>
+    {% for answer in zip(A.query.filter_by(question_id = question[0].id).all()[1:]|shuffle,
+         range(1, len_(A.query.filter_by(question_id = question[0].id).all()[1:]) + 1)) %}
+
+        <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}">{{ answer[1] }}: {{ answer[0].text }}
+        <br>
+    {% endfor %}
+    <input type="radio" name="{{ question[0].id }}" value="no_answer" checked>پاسخ نمیدهم
+    <br>
+
+    </div>
+    </div>
+    <hr>
+    {% endfor %}
+    <input type="submit" value='پایان ازمون'>
+</form>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}ورود به آزمون{% endblock title %}
+
+{% block content %}
+<h1>صفحه آزمون</h1>
+{% if has_exam %}
+<p>نام آزمون شما: {{ Azmoon.query.where(Azmoon.id == get_user(username).azmoon_id).first().name }}</p>
+<a href="{{ url_for("users.start_exam") }}">ورود به آزمون</a>
+{% else %}
+<p>آزمونی برای شما {{ username }} پیدا نشد.
+</p>
+{% endif %}
+{% endblock content %}

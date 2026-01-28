@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>پنل ادمین</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+        .actions {
+            border-color: black;
+            border-radius: 5px;
+            border-width: 3px;
+            border-style: solid;
+            display: inline-block;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+    </style>
+</head>
+<body>
+{% include 'flash-messages.html' %}
+
+    <h1>پنل ادمین</h1>
+    <div class="actions">
+        <a href="{{ url_for('admin.register_new_user') }}">ثبت کاربر جدید</a>
+        |
+        <a href="{{ url_for('admin.azmoon_register') }}">ثبت آزمون جدید</a>
+        |
+        <a href="{{ url_for('admin.add_questions') }}">ثبت سوال</a>
+        |
+        <a href="{{ url_for('admin.add_options') }}">ثبت گزینه</a>
+    </div>
+</body>
+</html>

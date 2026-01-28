@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت کاربر جدید</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+<h1>ثبت کاربر جدید</h1>
+{% include "form-errors.html" %}
+<form method="POST" action="/admin/register-user">
+    {{ form.csrf_token }}
+    نام کاربری: {{ form.username }}
+    <br>
+    ایمیل: {{ form.email }}
+    <br>
+    <input type="submit" value="ثبت">
+</form>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}کارنامه ها{% endblock title %}
+
+{% block content %}
+    <h1>کارنامه های صادر شده</h1>
+    <div>
+    {% for res in results %}
+    <a href="{{ url_for('users.result_for', name=res) }}" class="normal-button" class="float-right">آزمون {{ res }}</a>
+    {% endfor %}
+    </div>
+{% endblock content %}

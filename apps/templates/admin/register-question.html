@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت سوال جدید</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+<h1>ثبت سوال جدید</h1>
+{% include "form-errors.html" %}
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    نام آزمونی که سوال برای ان ثبت می شود: {{ form.azmoon_name }}
+    <br>
+    متن سوال: {{ form.text }}
+    <br>
+    <input type="submit" value="ثبت سوال">
+</form>
+</body>
+</html>

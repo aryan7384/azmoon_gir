@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %}پایان آزمون{% endblock %}
+
+{% block content %}
+<h1>پاسخ شما ثبت شد!</h1>
+
+<a href="{{ url_for('users.result_for', name=azmoon_name) }}">دیدن کارنامه</a>
+
+{% endblock %}
