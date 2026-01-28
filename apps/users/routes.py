@@ -225,7 +225,6 @@ def start_exam():
             selected = request.form.get(q_id)
 
             if selected == "no_answer":
-                print(f"{q_id} no answer selected")
                 continue
 
             option_id = RealOption.query.filter_by(id=selected).first().id

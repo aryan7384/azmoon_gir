@@ -41,7 +41,6 @@ class RegisterAzmoonForm(FlaskForm):
 
     def validate_users(self, field):
         users = field.data.strip().split(os.linesep)
-        print(users)
         for user in users:
             if not User.query.where(User.username == user).first():
                 raise ValidationError(f'نام کاربری {user} یافت نشد.')
