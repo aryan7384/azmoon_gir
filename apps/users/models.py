@@ -8,7 +8,8 @@ __all__ = ["User",
            "RealQuestion",
            "RealOption",
            "Answer",
-           "Result"]
+           "Result",
+           "Teacher"]
 
 
 class User(BaseModel):
@@ -17,7 +18,7 @@ class User(BaseModel):
     username = mapped_column(String(50), unique=True, nullable=False)
     email = mapped_column(String(80), unique=True, nullable=False)
     password = mapped_column(String(256), nullable=False)
-
+    # TODO: add multiple-teachers
     azmoon_id = mapped_column(
         Integer,
         ForeignKey('azmoon.id'),
