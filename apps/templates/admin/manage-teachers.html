@@ -20,7 +20,12 @@
                         <div>
                             نام کاربری: {{ teacher["username"] }}
                             <br>
-                            نام دانش اموزان: {{ teacher["students"] }}
+                            {% if teacher["students"] %}
+                            نام دانش اموزان: {{ ", ".join(teacher["students"]) }}
+                            {% else %}
+                            دانش اموزی برای این معلم ثبت نشده است.
+                            {% endif %}
+                            <br>
                             <a href="{{ url_for("admin.removeTeacher", teacher_id=teacher["id"]) }}">حذف معلم</a>
                             <a href="{{ url_for("admin.modifyTeacher", teacher_id=teacher["id"]) }}">تغییر اطلاعات</a>
                         </div>
