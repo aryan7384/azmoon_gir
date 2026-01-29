@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% include 'form-errors.html' %}
     <form action="{{ url_for('users.login') }}" method="post" novalidate="novalidate">
         {{ form.csrf_token }}
         نام کاربری:
