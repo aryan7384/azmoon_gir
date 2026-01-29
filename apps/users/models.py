@@ -57,7 +57,7 @@ class User(BaseModel):
 class Azmoon(BaseModel):
     __tablename__ = 'azmoon'
 
-    teacher_id
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     questions_counter: Mapped[int] = mapped_column(default=0, nullable=False)
     
