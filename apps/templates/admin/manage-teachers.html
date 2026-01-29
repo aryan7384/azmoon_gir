@@ -18,11 +18,11 @@
                 {% if teachers %}
                     {% for teacher in teachers %}
                         <div>
-                            نام کاربری: {{ teacher.username }}
+                            نام کاربری: {{ teacher["username"] }}
                             <br>
-                            نام دانش اموزان: {{ teacher.students }}
-                            <a href="{{ url_for("admin.removeTeacher", teacher_id=teacher.id) }}">حذف معلم</a>
-                            <a href="{{ url_for("admin.modifyTeacher", teacher_id=teacher.id) }}">تغییر اطلاعات</a>
+                            نام دانش اموزان: {{ teacher["students"] }}
+                            <a href="{{ url_for("admin.removeTeacher", teacher_id=teacher["id"]) }}">حذف معلم</a>
+                            <a href="{{ url_for("admin.modifyTeacher", teacher_id=teacher["id"]) }}">تغییر اطلاعات</a>
                         </div>
                     {% endfor %}
                 {% else %}
