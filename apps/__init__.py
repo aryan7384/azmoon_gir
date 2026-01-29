@@ -8,7 +8,9 @@ from apps.extensions import hashing
 from datetime import timedelta
 import apps.exceptions as app_exp
 from flask_migrate import Migrate
-import random, os, dotenv
+import random
+import os
+import dotenv
 
 
 def register_blueprints(application: Flask):
