@@ -7,7 +7,8 @@ import os
 
 
 __all__ = ["LoginForm",
-           "RegisterTeacherForm"]
+           "RegisterTeacherForm",
+           "ModifyTeacherForm"]
 
 
 class LoginForm(FlaskForm):
@@ -21,3 +22,13 @@ class RegisterTeacherForm(FlaskForm):
     def validate_username(self, field):
         if Teacher.query.filter_by(username=field.data).first():
             raise ValidationError("نام کاربری تکراری است.")
+        
+
+class ModifyTeacherForm(FlaskForm):
+    username = StringField("نام کاربری", validators=[DataRequired()])
+    password = StringField("رمز عبور", validators=[DataRequired()])
+
+    def validate_username(self, field):
+        if Teacher.query.filter_by(username=field.data).first():
+            raise ValidationError("نام کاربری تکراری است.")
+        
