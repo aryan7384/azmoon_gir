@@ -82,13 +82,37 @@ def registerTeacher():
                            form=form)
 
 
-@blueprint.route("/admin/remove-teacher")
-def removeTeacher():
-    flash("not implemented")
-    return redirect(url_for('admin.admin_homepage'))
+@blueprint.route("/admin/remove-teacher/<teacher_id>")
+def removeTeacher(teacher_id):
+    if session.get("admin_logged_in") != True:
+        flash("اول رمز عبور را وارد کنید.")
+        return redirect(url_for('admin.login'))
+    
+    teacher = Teacher.query.filter_by(id=teacher_id).first()
+    db.session.delete(teacher)
+    db.session.commit()
+
+    flash("معلم حذف شد.")
+    return redirect(url_for("admin.admin_homepage"))
 
 
-@blueprint.route("/admin/modify-teacher")
-def modifyTeacher():
-    flash("not implemented")
-    return redirect(url_for('admin.admin_homepage'))
+@blueprint.route("/admin/modify-teacher/<teacher_id>", methods=["GET", "POST"])
+def modifyTeacher(teacher_id):
+    if session.get("admin_logged_in") != True:
+        flash("اول رمز عبور را وارد کنید.")
+        return redirect(url_for('admin.login'))
+
+    form = ModifyTeacherForm()
+
+    if form.validate_on_submit():
+        teacher = Teacher.query.filter_by(id=teacher_id).first()
+        teacher.username = form.username.data
+        teacher.password = hashing.hash_value(form.password.data,
+                                              salt=os.getenv("SALT")
+                                              )
+        db.session.commit()
+        flash(f"اطلاعات {teacher.username} به روز رسانی شد.")
+        return redirect(url_for("admin.admin_homepage"))
+
+    return render_template("admin/modify-teacher.html", form=form)
+
