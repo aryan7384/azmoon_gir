@@ -50,7 +50,6 @@ def calculate_result(user):
 
     db.session.add(New_result)
     db.session.commit()
-
     
 
 @blueprint.route('/login/', methods=["GET", "POST"])

@@ -1,9 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, TextAreaField, PasswordField
-from wtforms.fields.numeric import IntegerField
-from wtforms.validators import DataRequired, ValidationError, Length
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, ValidationError
 from apps.users.models import Teacher
-import os
 
 
 __all__ = ["LoginForm",
