@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>مدیریت معلمان</title>
+        <style>
+            body {
+                direction: rtl;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>ثبت، حذف یا تفییر معلمان</h1>
+        <div>
+            <a href="{{ url_for("admin.registerTeacher") }}">ثبت معلم جدید</a>
+            <section>
+                <h2>لیست معلمان</h2>
+                <hr>
+                {% if teachers %}
+                    {% for teacher in teachers %}
+                        <div>
+                            نام کاربری: {{ teacher.username }}
+                            <br>
+                            نام دانش اموزان: {{ teacher.students }}
+                            <a href="{{ url_for("admin.removeTeacher", teacher_id=teacher.id) }}">حذف معلم</a>
+                            <a href="{{ url_for("admin.modifyTeacher", teacher_id=teacher.id) }}">تغییر اطلاعات</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>معلمی یافت نشد!</p>
+                {% endif %}
+            </section>
+        </div>
+    </body>
+</html>
