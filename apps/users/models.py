@@ -12,13 +12,19 @@ __all__ = ["User",
            "Teacher"]
 
 
+class Teacher(BaseModel):
+    username: Mapped[str] = mapped_column(unique=True,
+                                          nullable=False)
+    password = mapped_column(String(256), nullable=False)
+
+
 class User(BaseModel):
     __tablename__ = 'user'
 
     username = mapped_column(String(50), unique=True, nullable=False)
     email = mapped_column(String(80), unique=True, nullable=False)
     password = mapped_column(String(256), nullable=False)
-    # TODO: add multiple-teachers
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
     azmoon_id = mapped_column(
         Integer,
         ForeignKey('azmoon.id'),
@@ -51,6 +57,7 @@ class User(BaseModel):
 class Azmoon(BaseModel):
     __tablename__ = 'azmoon'
 
+    teacher_id
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     questions_counter: Mapped[int] = mapped_column(default=0, nullable=False)
     
