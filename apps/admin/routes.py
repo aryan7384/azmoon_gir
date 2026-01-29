@@ -21,7 +21,7 @@ def admin_homepage():
     return render_template("admin/admin.html")
 
 
-@blueprint.route("/admin/login/", methods=get_post)
+@blueprint.route("/admin/login/", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -52,12 +52,13 @@ def manageTeachers():
                         ).all()[:3],
                         "id": teacher.id}
         teachers.append(teacher_dict)
+        
 
     return render_template("admin/manage-teachers.html",
                            teachers=teachers)
 
 
-@blueprint.route("/admin/register-teacher", method=["GET", "POST"])
+@blueprint.route("/admin/register-teacher", methods=["GET", "POST"])
 def registerTeacher():
     if session.get("admin_logged_in") != True:
         flash("اول رمز عبور را وارد کنید.")
@@ -77,7 +78,8 @@ def registerTeacher():
         flash("معلم جدید ثبت شد!")
         return redirect(url_for("admin.admin_homepage"))
 
-    return render_template("admin/resgiter-teacher.html")
+    return render_template("admin/register-teacher.html",
+                           form=form)
 
 
 @blueprint.route("/admin/remove-teacher")
