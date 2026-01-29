@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تغییر اطلاعات معلم</title>
+</head>
+<body>
+    <a href="{{ url_for("admin.admin_homepage") }}">بازگشت به صفحه اصلی</a>
+    <h1>اطلاعات معلم را تغییر دهید:</h1>
+    {% include "form-errors.html" %}
+    <form action="" method="POST">
+        {{ form.csrf_token }}
+        {{ form.username.label }}: {{ form.username }}
+        <br>
+        {{ form.password.label }}: {{ form.password }}
+        <input type="submit" value="ثبت تغییرات">
+    </form>
+</body>
+</html>
