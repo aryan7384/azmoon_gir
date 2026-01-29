@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 blueprint = Blueprint('teachers', __name__)
 
 
-@blueprint.route("/teacher/login")
+@blueprint.route("/teacher/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
