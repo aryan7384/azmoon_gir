@@ -2,6 +2,7 @@ from flask import Flask
 from apps.users.routes import blueprint as users_blueprint
 from apps.admin.routes import blueprint as admin_blueprint
 from apps.home.routes import blueprint as home_blueprint
+from apps.teachers.routes import blueprint as teachers_blueprint
 from apps.database import db
 from apps.users.models import *
 from apps.extensions import hashing
@@ -17,6 +18,7 @@ def register_blueprints(application: Flask):
     application.register_blueprint(users_blueprint)
     application.register_blueprint(admin_blueprint)
     application.register_blueprint(home_blueprint)
+    application.register_blueprint(teachers_blueprint)
 
 
 def register_error_handlers(application: Flask):
