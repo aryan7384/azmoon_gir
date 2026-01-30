@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>ثبت آزمون</title>
 </head>
 <body>
-$END$
+{% include 'form-errors.html' %}
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
+    <br>
+    {{ form.users.label }}: {{ form.users }}
+    <br>
+    <input type="submit" value="ثبت آزمون">
+</form>
 </body>
 </html>
