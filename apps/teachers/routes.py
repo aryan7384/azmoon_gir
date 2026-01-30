@@ -33,4 +33,4 @@ def dashboard():
     if not session.get('teacher_username'):
         flash("اول وارد شوید.", "info")
         return redirect(url_for('teachers.login'))
-    return "<p>خوژتیپ</p>"
+    return render_template("teachers/teacher-panel.html")
