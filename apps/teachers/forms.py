@@ -41,3 +41,16 @@ class RegisterExamForm(FlaskForm):
         for user in users:
             if not User.query.filter_by(username=user).first():
                 raise ValidationError(f"نام کاربری {user} یافت نشد.")
+
+
+class ModifyExamForm(FlaskForm):
+    azmoon_name = StringField('نام آزمون', validators=[DataRequired(),
+                                                       Length(max=50)])
+
+    users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود', validators=[DataRequired()])
+
+    def validate_users(self, field):
+        users = field.data.strip().split(os.linesep)
+        for user in users:
+            if not User.query.filter_by(username=user).first():
+                raise ValidationError(f"نام کاربری {user} یافت نشد.")
