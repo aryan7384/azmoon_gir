@@ -14,7 +14,7 @@ blueprint = Blueprint('admin', __name__)
 
 @blueprint.route("/admin/")
 def admin_homepage():
-    if session.get("admin_logged_in") != True:
+    if not session.get("admin_logged_in"):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
     
@@ -25,8 +25,7 @@ def admin_homepage():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-
-        if sha256(request.form["password"].encode()).hexdigest() == os.getenv("ADMIN_PASSWORD_HASHED"):
+        if sha256(request.form["password"].encode("utf-8")).hexdigest() == os.getenv("ADMIN_PASSWORD_HASHED"):
             flash("خوش آمدید!")
             session['admin_logged_in'] = True
             return redirect(url_for('admin.admin_homepage'))
@@ -52,7 +51,6 @@ def manageTeachers():
                         ).all()[:3],
                         "id": teacher.id}
         teachers.append(teacher_dict)
-        
 
     return render_template("admin/manage-teachers.html",
                            teachers=teachers)
@@ -84,7 +82,7 @@ def registerTeacher():
 
 @blueprint.route("/admin/remove-teacher/<teacher_id>")
 def removeTeacher(teacher_id):
-    if session.get("admin_logged_in") != True:
+    if not (session.get("admin_logged_in") == True):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
     
@@ -102,10 +100,10 @@ def modifyTeacher(teacher_id):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
 
+    teacher = Teacher.query.filter_by(id=teacher_id).first()
     form = ModifyTeacherForm()
 
     if form.validate_on_submit():
-        teacher = Teacher.query.filter_by(id=teacher_id).first()
         teacher.username = form.username.data
         teacher.password = hashing.hash_value(form.password.data,
                                               salt=os.getenv("SALT")
@@ -114,5 +112,5 @@ def modifyTeacher(teacher_id):
         flash(f"اطلاعات {teacher.username} به روز رسانی شد.")
         return redirect(url_for("admin.admin_homepage"))
 
+    form.username = teacher.username
     return render_template("admin/modify-teacher.html", form=form)
-
