@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تغییر مشخصات آزمون</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+<h1>مشخصات آزمون را در اینجا تغییر دهید</h1>
+<a href="{{ url_for('teachers.dashborad') }}">بازگشت به منوی اصلی</a>
+{% include 'form-errors.html' %}
+<form action="" method="POST">
+    {{ form.csrf_token }}
+    {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
+    <br>
+    {{ form.users.label }}: {{ form.users }}
+    <br>
+    <input type="submit" value="تغییر اطلاعات آزمون">
+</form>
+</body>
+</html>
