@@ -1,89 +1,217 @@
-.alert-success {
-    background-color: black;
-    color: rgb(122, 174, 17);
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(122, 174, 17);
-    border-radius: 3px;
-    padding: 10px;
-    display: inline-block;
-    font-weight: 600;
-    margin: 3px;
+/* static/style.css */
+
+/* --- تنظیمات کلی و متغیرها --- */
+:root {
+    --primary-color: #3b82f6; /* آبی مدرن */
+    --primary-hover: #2563eb;
+    --secondary-color: #64748b; /* خاکستری */
+    --success-color: #22c55e;
+    --danger-color: #ef4444;
+    --background-color: #f8fafc;
+    --surface-color: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --radius: 8px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
-.alert-danger {
-    background-color: black;
-    color: rgb(255, 0, 0);
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(255, 0, 0);
-    border-radius: 3px;
-    padding: 10px;
-    display: inline-block;
-    font-weight: 600;
-    margin: 3px;
-}
-.alert-info {
-    background-color: black;
-    color: rgb(100, 100, 255);
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(100, 100, 255);
-    border-radius: 3px;
-    padding: 10px;
-    display: inline-block;
-    font-weight: 600;
-    margin: 3px;
-}
-.alert-warning {
-    background-color: black;
-    color: rgb(255, 120, 0);
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(255, 120, 0);
-    border-radius: 3px;
-    padding: 10px;
-    display: inline-block;
-    font-weight: 600;
-    margin: 3px;
-}
-nav {
-    display: inline-block;
-    background-color: rgb(0, 170, 170); 
-    padding-left: 5px;
-    padding-bottom: 5px;
-    border-radius: 5px;
-}
-a, .button-customized {
-    text-decoration: none;
-    margin-top: 5px;
-    margin-right: 5px;
-    background-color: white;
-    color: black;
-    padding: 5px;
-    border-radius: 5px;
-    transition: ease-out 200ms;
+
+* {
     box-sizing: border-box;
-    border: 2px solid transparent;
-}
-
-a:hover, .button-customized:hover {
-    border-color: white;
-    color:white;
-    background-color: black;
-}
-
-.float-right {
-    float: right;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: "Exo", sans-serif;
-    background-color: black;
-    color: white;
     direction: rtl;
-    font-size: 20px;
+    font-family: 'Vazir', 'Tahoma', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-main);
+    line-height: 1.6;
 }
 
-input {
-     font-family: "Exo", sans-serif;
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: 0.3s;
 }
+
+ul {
+    list-style: none;
+}
+
+/* --- چیدمان (Layout) --- */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- نوار ناوبری (Navbar) --- */
+.navbar {
+    background-color: var(--surface-color);
+    box-shadow: var(--shadow);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.navbar .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-link {
+    color: var(--text-main);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+}
+
+/* --- دکمه‌ها (Buttons) --- */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+.btn-danger:hover { background-color: #dc2626; }
+
+.btn-outline {
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    background: transparent;
+}
+.btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+/* --- فرم‌ها (Forms) --- */
+.form-card {
+    background: var(--surface-color);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 400px;
+    margin: 2rem auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* --- کارت‌ها و لیست‌ها (Cards & Grids) --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--surface-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.card-body {
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* --- پیام‌ها (Flash Messages) --- */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: var(--radius);
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-right: 4px solid #1e40af;
+}
+
+/* --- جدول‌ها --- */
+.table-responsive {
+    overflow-x: auto;
+}
+/* اگر نیاز به جدول داشتید این را اضافه کنید */
