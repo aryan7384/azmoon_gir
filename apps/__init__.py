@@ -33,6 +33,7 @@ def register_shell_context(application: Flask):
             "db": db,
             "User": User,
             "Azmoon": Azmoon,
+            "Teacher": Teacher,
             "RealOption": RealOption,
             "RealQuestion": RealQuestion,
             "Answer": Answer,
