@@ -19,8 +19,8 @@
         	<div>
             شناسه:{{ exam.id }}
             نام آزمون: {{ exam.name }}
-            <a href="{{ url_for("teacher.modify_azmoon", id=exam.id) }}">تغییر نام و مشخصات</a>
-            <a href="#">حذف</a>
+            <a href="{{ url_for("teachers.modify_azmoon", id=exam.id) }}">تغییر نام و مشخصات</a>
+            <a href="{{ url_for("teachers.delete_azmoon", id=exam.id) }}">حذف</a>
             </div>
         {% endfor %}
     </div>
