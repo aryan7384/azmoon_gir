@@ -11,7 +11,7 @@
 </head>
 <body>
 <h1>مشخصات آزمون را در اینجا تغییر دهید</h1>
-<a href="{{ url_for('teachers.dashborad') }}">بازگشت به منوی اصلی</a>
+<a href="{{ url_for('teachers.dashboard') }}">بازگشت به منوی اصلی</a>
 {% include 'form-errors.html' %}
 <form action="" method="POST">
     {{ form.csrf_token }}

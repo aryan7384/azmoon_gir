@@ -54,7 +54,8 @@ class ModifyExamForm(FlaskForm):
     def validate_users(self, field):
         users = field.data.strip().split(os.linesep)
         if len(users) == 1 and users[0] == "":
-            return
-        for user in users:
-            if not User.query.filter_by(username=user).first():
-                raise ValidationError(f"نام کاربری {user} یافت نشد.")
+            pass
+        else:
+            for user in users:
+                if not User.query.filter_by(username=user).first():
+                    raise ValidationError(f"نام کاربری {user} یافت نشد.")

@@ -151,12 +151,11 @@ def modify_azmoon(id):
         flash("ازمون با موفقیت به روزرسانی شد.")
         return redirect(url_for('teachers.dashboard'))
 
-    form.azmoon_name = exam.name
+    form.azmoon_name.data = exam.name
     users_records = User.query.filter_by(azmoon_id=exam.id).all()
     users = []
     for i in users_records:
         users.append(i.username)
-    form.users = os.linesep.join(users)
-    return render_template("teachers/modify_exam.html", form=form)
-
-
+    form.users.data = os.linesep.join(users)
+    return render_template("teachers/modify_exam.html",
+                           form=form)

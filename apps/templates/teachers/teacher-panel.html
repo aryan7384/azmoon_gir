@@ -20,9 +20,14 @@
             شناسه:{{ exam.id }}
             نام آزمون: {{ exam.name }}
             <a href="{{ url_for("teachers.modify_azmoon", id=exam.id) }}">تغییر نام و مشخصات</a>
-            <a href="{{ url_for("teachers.delete_azmoon", id=exam.id) }}">حذف</a>
+            <form action="{{ url_for("teachers.delete_azmoon", id=exam.id) }}" method="post">
+                <input type="submit" value="حذف">
+            </form>
             </div>
         {% endfor %}
+        {% if not exams %}
+            <p>آزمونی یافت نشد!</p>
+        {% endif %}
     </div>
 </div>
 <div>
