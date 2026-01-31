@@ -30,7 +30,7 @@ class RegisterUserForm(FlaskForm):
 class RegisterExamForm(FlaskForm):
     azmoon_name = StringField('نام آزمون', validators=[DataRequired(),
                                                        Length(max=50)])
-    users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود', validators=[DataRequired()])
+    users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود')
 
     def validate_azmoon_name(self, field):
         if Azmoon.query.filter_by(name=field.data).first():
@@ -38,6 +38,8 @@ class RegisterExamForm(FlaskForm):
 
     def validate_users(self, field):
         users = field.data.strip().split(os.linesep)
+        if len(users) == 1 and users[0] == "":
+            return
         for user in users:
             if not User.query.filter_by(username=user).first():
                 raise ValidationError(f"نام کاربری {user} یافت نشد.")
@@ -47,10 +49,12 @@ class ModifyExamForm(FlaskForm):
     azmoon_name = StringField('نام آزمون', validators=[DataRequired(),
                                                        Length(max=50)])
 
-    users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود', validators=[DataRequired()])
+    users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود')
 
     def validate_users(self, field):
         users = field.data.strip().split(os.linesep)
+        if len(users) == 1 and users[0] == "":
+            return
         for user in users:
             if not User.query.filter_by(username=user).first():
                 raise ValidationError(f"نام کاربری {user} یافت نشد.")
