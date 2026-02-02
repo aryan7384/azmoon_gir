@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, redirect, url_for, session, flash
 from .forms import *
 from ..database import db
 from apps.users.models import *
@@ -43,23 +43,27 @@ def login():
 
 @blueprint.route("/teacher")
 def dashboard():
-    check_teacher_logged_in()
-    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
+    if result := check_teacher_logged_in():
+        return result
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     exams = Azmoon.query.filter_by(teacher_id=teacher.id).all()
+    users = User.query.filter_by(teacher_id=teacher.id).all()
     return render_template("teachers/teacher-panel.html",
-                           exams=exams)
+                           exams=exams,
+                           users=users)
 
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
 def register_azmoon():
-    check_teacher_logged_in()
+    if result := check_teacher_logged_in():
+        return result
 
-    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     form = RegisterExamForm()
     if form.validate_on_submit():
         users = form.users.data.strip().splitlines()
         for i in users:
-            user = User.query.where(teacher_id=teacher.id,
+            user = User.query.filter_by(teacher_id=teacher.id,
                                     username=i).first()
             if not user:
                 flash(f"کاربر {i} برای معلم دیگری ثبت شده.")
@@ -72,10 +76,9 @@ def register_azmoon():
         print(users)
         if len(users) != 0:
             for user in users:
-                new_user = User.query.where(username=user).first()
+                new_user = User.query.filter_by(username=user).first()
                 new_user.azmoon_id = azmoon.id
-                db.session.add(new_user)
-            db.session.commit()
+                db.session.commit()
 
         flash("آزمون جدید ثبت شد.")
         return redirect(url_for("teachers.dashboard"))
@@ -86,14 +89,20 @@ def register_azmoon():
 
 @blueprint.route("/teacher/azmoon/delete/<id>", methods=['POST'])
 def delete_azmoon(id):
-    check_teacher_logged_in()
+    if result := check_teacher_logged_in():
+        return result
 
     azmoon = Azmoon.query.filter_by(id=id).first()
-    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
+    if not azmoon:
+        flash("آزمون یافت نشد")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if azmoon.teacher_id != teacher.id:
         flash("شما دسترسی به این آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
+    # TODO: remove azmoon_id from any user that had the same azmoon_id
     db.session.delete(azmoon)
     db.session.commit()
     flash(f"آزمون {azmoon.name}با موفقیت حذف شد.")
@@ -102,14 +111,15 @@ def delete_azmoon(id):
 
 @blueprint.route("/teacher/azmoon/modify/<id>", methods=['GET', 'POST'])
 def modify_azmoon(id):
-    check_teacher_logged_in()
+    if result := check_teacher_logged_in():
+        return result
 
     exam = Azmoon.query.where(Azmoon.id == id).first()
     if not exam:
         flash("آزمون یافت نشد.")
         return redirect(url_for('teachers.dashboard'))
 
-    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if exam.teacher_id != teacher.id:
         flash("شما دسترسی به این آزمون ندارید")
         return redirect(url_for('teachers.dashboard'))
@@ -130,8 +140,7 @@ def modify_azmoon(id):
         users_records = User.query.filter_by(azmoon_id=exam.id).all()
         for user in users_records:
             user.azmoon_id = None
-            db.session.add(user)
-        db.session.commit()
+            db.session.commit()
 
         users = form.users.data.strip().splitlines()
         for user in users:
@@ -158,6 +167,43 @@ def modify_azmoon(id):
 
 @blueprint.route("/teacher/users/register", methods=['GET', 'POST'])
 def register_user():
-    check_teacher_logged_in()
+    if result := check_teacher_logged_in():
+        return result
+
     form = RegisterUserForm()
+    if form.validate_on_submit():
+        teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+        new_user = User(username=form.username.data,
+                        name=form.name.data,
+                        email=form.email.data,
+                        teacher_id=teacher.id,
+                        password=hashing.hash_value("#" + form.username.data + "123"))
+
+        db.session.add(new_user)
+        db.session.commit()
+        flash("کاربر ثبت شد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    return render_template('teachers/user-register.html', form=form)
+
+
+@blueprint.route("/teacher/users/delete/<id>", methods=['POST'])
+def delete_user(id):
+    if result := check_teacher_logged_in():
+        return result
+
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        flash("کاربر یافت نشد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if user.teacher_id != teacher.id:
+        flash("شما اجازه ی دسترسی به کاربر مد نظر را ندارید.")
+        return redirect(url_for('teachers.dashboard'))
+
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"کاربر {user.name} با موفقیت حذف شد.")
+    return redirect(url_for('teachers.dashboard'))
 
