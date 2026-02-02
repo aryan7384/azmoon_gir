@@ -27,6 +27,13 @@ class RegisterUserForm(FlaskForm):
             raise ValidationError("ایمیل تکراری است.")
 
 
+class ModifyUserForm(FlaskForm):
+    username = StringField('نام کاربری', validators=[DataRequired(), Length(max=50)])
+    name = StringField("نام و نام خانوادگی", validators=[DataRequired()])
+    email = StringField('ایمیل', validators=[DataRequired(), Email()])
+    submit = SubmitField("تغییر اطلاعات")
+
+
 class RegisterExamForm(FlaskForm):
     azmoon_name = StringField('نام آزمون', validators=[DataRequired(),
                                                        Length(max=50)])
