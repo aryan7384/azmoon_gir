@@ -50,6 +50,7 @@ class ModifyExamForm(FlaskForm):
                                                        Length(max=50)])
 
     users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود')
+    is_available = BooleanField("ایا ازمون در دسترس کاربران قرار داده شود؟", default=False)
 
     def validate_users(self, field):
         users = field.data.strip().split(os.linesep)
