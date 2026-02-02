@@ -40,6 +40,7 @@
             <form action="{{ url_for("teachers.delete_azmoon", id=exam.id) }}" method="post">
                 <input type="submit" value="حذف">
             </form>
+            <a href="{{ url_for('teachers.questions', id=exam.id) }}">سوالات آزمون</a>
             </div>
         {% endfor %}
         {% if not exams %}
@@ -49,7 +50,9 @@
 </div>
 <div>
     <h2>پاسخ ها</h2>
-    <p>پاسخ دانش اموزی یافت نشد!</p>
+    <div>
+
+    </div>
 </div>
 <div>
     <h2>کارنامه ها</h2>
