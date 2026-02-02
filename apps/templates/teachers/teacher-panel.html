@@ -7,10 +7,25 @@
 </head>
 <body>
 <h1>شما در صفحه ی معلم هستید.</h1>
+{% include 'flash-messages.html' %}
 <div>
     <h2>کاربران</h2>
-    <a href="#">ثبت کاربر جدید</a>
-    <p>دانش آموزی یافت نشد!</p>
+    <a href="{{ url_for("teachers.register_user") }}">ثبت کاربر جدید</a>
+    <div>
+        {% for user in users %}
+        <div>
+            شناسه: {{ user.id }}
+            نام: {{ user.name }}
+            ایمیل: {{ user.email }}
+            <form action="{{ url_for("teachers.delete_user", id=user.id) }}" method="post">
+                <input type="submit" value="حذف دانش اموز">
+            </form>
+        </div>
+        {% endfor %}
+        {% if not users %}
+            <p>کاربری یافت نشد!</p>
+        {% endif %}
+    </div>
 </div>
 <div>
     <h2>آزمون ها & سوالات</h2>
