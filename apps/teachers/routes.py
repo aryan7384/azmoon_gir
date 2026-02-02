@@ -22,6 +22,8 @@ def check_teacher_logged_in():
         del session['teacher_username']
         return redirect(url_for('teachers.login'))
 
+    return None
+
 
 @blueprint.route("/teacher/login", methods=['GET', 'POST'])
 def login():
@@ -73,7 +75,7 @@ def register_azmoon():
                 new_user = User.query.where(username=user).first()
                 new_user.azmoon_id = azmoon.id
                 db.session.add(new_user)
-                db.session.commit()
+            db.session.commit()
 
         flash("آزمون جدید ثبت شد.")
         return redirect(url_for("teachers.dashboard"))
@@ -114,7 +116,16 @@ def modify_azmoon(id):
 
     form = ModifyExamForm()
     if form.validate_on_submit():
-        # TODO: check if the name is not used
+        all_exams = Azmoon.query.where(Azmoon.name != exam.name,
+                                       Azmoon.teacher_id == teacher.id).all()
+        names = []
+        for e in all_exams:
+            names.append(e.name)
+
+        if form.azmoon_name.data in names:
+            flash("نام آزمون تکراری است.")
+            return redirect(url_for('teachers.modify_azmoon', id=id))
+
         exam.name = form.azmoon_name.data
         users_records = User.query.filter_by(azmoon_id=exam.id).all()
         for user in users_records:
