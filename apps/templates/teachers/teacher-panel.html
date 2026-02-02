@@ -17,6 +17,7 @@
             شناسه: {{ user.id }}
             نام: {{ user.name }}
             ایمیل: {{ user.email }}
+            <a href="{{ url_for('teachers.modify_user', id=user.id) }}">تغییر اطلاعات</a>
             <form action="{{ url_for("teachers.delete_user", id=user.id) }}" method="post">
                 <input type="submit" value="حذف دانش اموز">
             </form>

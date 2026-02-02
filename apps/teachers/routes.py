@@ -184,7 +184,7 @@ def register_user():
         flash("کاربر ثبت شد.")
         return redirect(url_for('teachers.dashboard'))
 
-    return render_template('teachers/user-register.html', form=form)
+    return render_template('teachers/register-user.html', form=form)
 
 
 @blueprint.route("/teacher/users/delete/<id>", methods=['POST'])
@@ -207,3 +207,40 @@ def delete_user(id):
     flash(f"کاربر {user.name} با موفقیت حذف شد.")
     return redirect(url_for('teachers.dashboard'))
 
+@blueprint.route('/teacher/users/modify/<id>', methods=['GET', 'POST'])
+def modify_user(id):
+    if result := check_teacher_logged_in():
+        return result
+
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        flash("کاربر یافت نشد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if user.teacher_id != teacher.id:
+        flash("شما اجازه ی دسترسی به کاربر مد نظر را ندارید.")
+        return redirect(url_for('teachers.dashboard'))
+
+    form = ModifyUserForm()
+    if form.validate_on_submit():
+        # check form datas
+        if User.query.where(User.username == form.username.data,
+                            User.username != user.username).first():
+            flash("نام کاربری تکراری است.")
+            return redirect(url_for('teachers.modify_user'), id=id)
+
+        if User.query.where(User.email == form.email.data,
+                            User.email != user.email):
+            flash("ایمیل تکراری است.")
+            return redirect(url_for('teachers.modify_user', id=id))
+
+        user.name = form.name.data
+        user.email = form.email.data
+        user.username = form.username.data
+        db.session.commit()
+        flash("تغییرات اعمال شد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    return render_template('teachers/register-user.html',
+                           form=form)
