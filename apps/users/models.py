@@ -58,7 +58,7 @@ class Azmoon(BaseModel):
     __tablename__ = 'azmoon'
 
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
-    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=False)
     questions: Mapped[List["RealQuestion"]] = relationship(
         "RealQuestion",
