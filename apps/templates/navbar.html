@@ -1,13 +1,13 @@
 <nav>
-    <a href="{{ url_for('home.home') }}"  class="float-right">صفحه اصلی</a>
+    <a href="{{ url_for('home.home') }}">صفحه اصلی</a>
     {% if not session.get("username") %}
-        <a href="{{ url_for('users.login') }}" class="float-right">ورود</a>
+        <a href="{{ url_for('users.login') }}">ورود</a>
     {% else %}
-        <a href="{{ url_for('users.dashboard') }}" class="float-right">حساب کاربری</a>
-        <a href="{{ url_for('users.logout') }}" class="float-right">خروج از حساب کاربری</a>
-        <a href="{{ url_for('users.azmoon') }}" class="float-right">آزمون</a>
-        <a href="{{ url_for('users.results') }}" class="float-right">کارنامه ها</a>
+        <a href="{{ url_for('users.dashboard') }}">حساب کاربری</a>
+        <a href="{{ url_for('users.logout') }}">خروج از حساب کاربری</a>
+        <a href="{{ url_for('users.azmoon') }}">آزمون</a>
+        <a href="{{ url_for('users.results') }}">کارنامه ها</a>
     {% endif %}
-    <a href="{{ url_for('admin.admin_homepage') }}" class="float-right">پنل ادمین</a>
-    <a href="{{ url_for('teachers.dashboard') }}" class="float-right">پنل معلم</a>
+    <a href="{{ url_for('admin.admin_homepage') }}">پنل ادمین</a>
+    <a href="{{ url_for('teachers.dashboard') }}">پنل معلم</a>
 </nav>
