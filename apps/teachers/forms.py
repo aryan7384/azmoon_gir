@@ -15,7 +15,6 @@ class LoginForm(FlaskForm):
 class RegisterUserForm(FlaskForm):
     username = StringField('نام کاربری', validators=[DataRequired()])
     email = StringField('ایمیل', validators=[DataRequired(), Email()])
-    password = PasswordField('رمز عبور', validators=[DataRequired()])
     submit = SubmitField("ثبت نام")
 
     def validate_username(self, field):
