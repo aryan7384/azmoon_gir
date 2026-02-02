@@ -11,6 +11,18 @@ dotenv.load_dotenv()
 blueprint = Blueprint('teachers', __name__)
 
 
+def check_teacher_logged_in():
+    if not session.get('teacher_username'):
+        flash("اول وارد شوید.", "info")
+        return redirect(url_for('teachers.login'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if not teacher:
+        flash("لطفا مجدد وارد شوید", "info")
+        del session['teacher_username']
+        return redirect(url_for('teachers.login'))
+
+
 @blueprint.route("/teacher/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -29,16 +41,8 @@ def login():
 
 @blueprint.route("/teacher")
 def dashboard():
-    if not session.get('teacher_username'):
-        flash("اول وارد شوید.", "info")
-        return redirect(url_for('teachers.login'))
-
-    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if not teacher:
-        flash("لطفا مجدد وارد شوید", "info")
-        del session['teacher_username']
-        return redirect(url_for('teachers.login'))
-
+    check_teacher_logged_in()
+    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
     exams = Azmoon.query.filter_by(teacher_id=teacher.id).all()
     return render_template("teachers/teacher-panel.html",
                            exams=exams)
@@ -46,16 +50,9 @@ def dashboard():
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
 def register_azmoon():
-    if not session.get('teacher_username'):
-        flash("اول وارد شوید.", "info")
-        return redirect(url_for('teachers.login'))
+    check_teacher_logged_in()
 
-    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if not teacher:
-        flash("لطفا مجدد وارد شوید", "info")
-        del session['teacher_username']
-        return redirect(url_for('teachers.login'))
-
+    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
     form = RegisterExamForm()
     if form.validate_on_submit():
         users = form.users.data.strip().splitlines()
@@ -87,17 +84,10 @@ def register_azmoon():
 
 @blueprint.route("/teacher/azmoon/delete/<id>", methods=['POST'])
 def delete_azmoon(id):
-    if not session.get('teacher_username'):
-        flash("اول وارد شوید.", "info")
-        return redirect(url_for('teachers.login'))
-
-    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if not teacher:
-        flash("لطفا مجدد وارد شوید", "info")
-        del session['teacher_username']
-        return redirect(url_for('teachers.login'))
+    check_teacher_logged_in()
 
     azmoon = Azmoon.query.filter_by(id=id).first()
+    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
     if azmoon.teacher_id != teacher.id:
         flash("شما دسترسی به این آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
@@ -110,27 +100,21 @@ def delete_azmoon(id):
 
 @blueprint.route("/teacher/azmoon/modify/<id>", methods=['GET', 'POST'])
 def modify_azmoon(id):
-    if not session.get('teacher_username'):
-        flash("اول وارد شوید.", "info")
-        return redirect(url_for('teachers.login'))
-
-    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if not teacher:
-        flash("لطفا مجدد وارد شوید", "info")
-        del session['teacher_username']
-        return redirect(url_for('teachers.login'))
+    check_teacher_logged_in()
 
     exam = Azmoon.query.where(Azmoon.id == id).first()
     if not exam:
         flash("آزمون یافت نشد.")
         return redirect(url_for('teachers.dashboard'))
 
+    teacher = Teacher.query.filter_by(username=session['teacher_user']).first()
     if exam.teacher_id != teacher.id:
         flash("شما دسترسی به این آزمون ندارید")
         return redirect(url_for('teachers.dashboard'))
 
     form = ModifyExamForm()
     if form.validate_on_submit():
+        # TODO: check if the name is not used
         exam.name = form.azmoon_name.data
         users_records = User.query.filter_by(azmoon_id=exam.id).all()
         for user in users_records:
@@ -159,3 +143,10 @@ def modify_azmoon(id):
     form.users.data = os.linesep.join(users)
     return render_template("teachers/modify_exam.html",
                            form=form)
+
+
+@blueprint.route("/teacher/users/register", methods=['GET', 'POST'])
+def register_user():
+    check_teacher_logged_in()
+    form = RegisterUserForm()
+
