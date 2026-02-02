@@ -13,7 +13,8 @@ class LoginForm(FlaskForm):
 
 
 class RegisterUserForm(FlaskForm):
-    username = StringField('نام کاربری', validators=[DataRequired()])
+    username = StringField('نام کاربری', validators=[DataRequired(), Length(max=50)])
+    name = StringField("نام و نام خانوادگی", validators=[DataRequired()])
     email = StringField('ایمیل', validators=[DataRequired(), Email()])
     submit = SubmitField("ثبت نام")
 
