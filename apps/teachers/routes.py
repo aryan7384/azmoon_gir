@@ -244,3 +244,11 @@ def modify_user(id):
 
     return render_template('teachers/register-user.html',
                            form=form)
+
+
+@blueprint.route('/teacher/questions/<id>', methods=['GET'])
+def questions(id):
+    if result := check_teacher_logged_in():
+        return result
+
+    return f"{id}"
