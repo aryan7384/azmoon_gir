@@ -45,10 +45,12 @@ def manageTeachers():
     teachers_record = Teacher.query.all()
 
     for teacher in teachers_record:
-        teacher_dict = {"username": teacher.username,
-                        "students": User.query.where(
+        students = User.query.where(
                             User.teacher_id == teacher.id
-                        ).all()[:3],
+                        ).all()[:3]
+        students = map(lambda s: s.name, students)
+        teacher_dict = {"username": teacher.username,
+                        "students": students,
                         "id": teacher.id}
         teachers.append(teacher_dict)
 
@@ -74,7 +76,7 @@ def registerTeacher():
         db.session.commit()
 
         flash("معلم جدید ثبت شد!")
-        return redirect(url_for("admin.admin_homepage"))
+        return redirect(url_for("admin.manageTeachers"))
 
     return render_template("admin/register-teacher.html",
                            form=form)
@@ -104,13 +106,17 @@ def modifyTeacher(teacher_id):
     form = ModifyTeacherForm()
 
     if form.validate_on_submit():
+        if Teacher.query.where(Teacher.username == form.username.data,
+                               Teacher.id != teacher_id).first():
+            flash("نام کاربری تکراری است.")
+            return redirect(url_for("admin.modifyTeacher", teacher_id=teacher_id))
         teacher.username = form.username.data
         teacher.password = hashing.hash_value(form.password.data,
                                               salt=os.getenv("SALT")
                                               )
         db.session.commit()
         flash(f"اطلاعات {teacher.username} به روز رسانی شد.")
-        return redirect(url_for("admin.admin_homepage"))
+        return redirect(url_for("admin.manageTeachers"))
 
-    form.username = teacher.username
+    form.username.data = teacher.username
     return render_template("admin/modify-teacher.html", form=form)
