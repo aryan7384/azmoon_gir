@@ -10,6 +10,7 @@
     </head>
     <body>
         <h1>ثبت، حذف یا تفییر معلمان</h1>
+        {% include 'flash-messages.html' %}
         <div>
             <a href="{{ url_for("admin.registerTeacher") }}">ثبت معلم جدید</a>
             <section>
