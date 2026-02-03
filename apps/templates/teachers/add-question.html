@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> افزودن سوال به ازمون {{ exam.name }}</title>
+</head>
+<body>
+<h1>افزودن سوال</h1>
+{% include 'flash-messages.html' %}
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    {{ form.title.label }}: {{ form.title }}
+    <br>
+    <input type="submit" value="ثبت سوال">
+</form>
+</body>
+</html>
