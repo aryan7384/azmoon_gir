@@ -67,3 +67,8 @@ class ModifyExamForm(FlaskForm):
             for user in users:
                 if not User.query.filter_by(username=user).first():
                     raise ValidationError(f"نام کاربری {user} یافت نشد.")
+
+
+class AddQuestionForm(FlaskForm):
+    title = StringField('متن سوال', validators=[DataRequired(),
+                                                Length(max=400)])
