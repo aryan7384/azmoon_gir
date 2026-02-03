@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>سوالات آزمون {{exam.name}}</title>
+    <style>
+        body {
+            direction: rtl;
+        }
+    </style>
 </head>
 <body>
-$END$
+<h1>سوالات آزمون {{exam.name}}</h1>
+<a href="{{ url_for('teachers.dashboard') }}">بازگشت به صفحه اصلی</a>
+<div>
+    {% for question in questions %}
+    شناسه: {{ question.id }}
+        <br>
+    عنوان: {{ question.title }}
+        <br>
+    {% endfor %}
+    {% if not questions %}
+	<p>سوالی یافت نشد!</p>
+    {% endif %}
+</div>
 </body>
 </html>
