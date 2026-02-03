@@ -137,6 +137,7 @@ def modify_azmoon(id):
             return redirect(url_for('teachers.modify_azmoon', id=id))
 
         exam.name = form.azmoon_name.data
+        exam.is_available = True
         users_records = User.query.filter_by(azmoon_id=exam.id).all()
         for user in users_records:
             user.azmoon_id = None
@@ -251,4 +252,49 @@ def questions(id):
     if result := check_teacher_logged_in():
         return result
 
-    return f"{id}"
+    exam = Azmoon.query.filter_by(id=id).first()
+    if not exam:
+        flash("آزمون یافت نشد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if exam.teacher_id != teacher.id:
+        flash("شما دسترسی به آزمون ندارید.")
+        return redirect(url_for('teachers.dashboard'))
+
+    questions = RealQuestion.query.filter_by(id=id).all()
+    return render_template("teachers/questions.html",
+                           questions=questions,
+                           exam=exam)
+
+
+@blueprint.route('/teacher/questions/add/<id>', methods=['GET', 'POST'])
+def add_question(id):
+    if result := check_teacher_logged_in():
+        return result
+
+    exam = Azmoon.query.filter_by(id=id).first()
+    if not exam:
+        flash("آزمون یافت نشد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if exam.teacher_id != teacher.id:
+        flash("شما دسترسی به آزمون ندارید.")
+        return redirect(url_for('teachers.dashboard'))
+
+    form = AddQuestionForm()
+    if form.validate_on_submit():
+        if RealQuestion.query.filter_by(title=form.title.data,
+                                        azmoon_id=exam.id).first():
+            flash("عنوان تکراری است.")
+            return redirect(url_for('teachers.add_question', id=id))
+        new_question = RealQuestion(title=form.title.data,
+                                    azmoon_id=exam.id)
+        db.session.add(new_question)
+        db.session.commit()
+        flash("سوال ثبت شد.")
+        return redirect(url_for('teachers.dashboard'))
+    return render_template("teachers/add-question.html",
+                           form=form,
+                           exam=exam)
