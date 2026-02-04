@@ -31,6 +31,7 @@ class ModifyUserForm(FlaskForm):
     username = StringField('نام کاربری', validators=[DataRequired(), Length(max=50)])
     name = StringField("نام و نام خانوادگی", validators=[DataRequired()])
     email = StringField('ایمیل', validators=[DataRequired(), Email()])
+    password = StringField('رمز عبور جدید', validators=[DataRequired()])
     submit = SubmitField("تغییر اطلاعات")
 
 
