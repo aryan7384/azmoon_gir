@@ -137,11 +137,8 @@ def modify_azmoon(id):
             return redirect(url_for('teachers.modify_azmoon', id=id))
 
         exam.name = form.azmoon_name.data
-        exam.is_available = True
-        users_records = User.query.filter_by(azmoon_id=exam.id).all()
-        for user in users_records:
-            user.azmoon_id = None
-            db.session.commit()
+        exam.is_available = form.is_available.data
+        db.session.commit()
 
         users = form.users.data.strip().splitlines()
         for user in users:
@@ -150,8 +147,10 @@ def modify_azmoon(id):
                 flash(f"کاربر {user_record.username}برای شما ثبت نشده است.")
                 return redirect(url_for('teachers.modify_azmoon', id=id))
             user_record.azmoon_id = exam.id
+            if form.is_available.data:
+                user_record.answered = False
             db.session.add(user_record)
-        db.session.commit()
+            db.session.commit()
 
         flash("ازمون با موفقیت به روزرسانی شد.")
         return redirect(url_for('teachers.dashboard'))
@@ -162,6 +161,7 @@ def modify_azmoon(id):
     for i in users_records:
         users.append(i.username)
     form.users.data = os.linesep.join(users)
+    form.is_available.data = exam.is_available
     return render_template("teachers/modify_exam.html",
                            form=form)
 
@@ -239,11 +239,16 @@ def modify_user(id):
         user.name = form.name.data
         user.email = form.email.data
         user.username = form.username.data
+        user.password = hashing.hash_value(form.password.data,
+                                           salt=os.getenv("SALT"))
         db.session.commit()
         flash("تغییرات اعمال شد.")
         return redirect(url_for('teachers.dashboard'))
 
-    return render_template('teachers/register-user.html',
+    form.username.data = user.username
+    form.email.data = user.email
+    form.name.data = user.name
+    return render_template('teachers/modify-user.html',
                            form=form)
 
 
@@ -268,12 +273,12 @@ def questions(id):
                            exam=exam)
 
 
-@blueprint.route('/teacher/questions/add/<id>', methods=['GET', 'POST'])
-def add_question(id):
+@blueprint.route('/teacher/questions/add/<exam_id>', methods=['GET', 'POST'])
+def add_question(exam_id):
     if result := check_teacher_logged_in():
         return result
 
-    exam = Azmoon.query.filter_by(id=id).first()
+    exam = Azmoon.query.filter_by(id=exam_id).first()
     if not exam:
         flash("آزمون یافت نشد.")
         return redirect(url_for('teachers.dashboard'))
@@ -298,3 +303,25 @@ def add_question(id):
     return render_template("teachers/add-question.html",
                            form=form,
                            exam=exam)
+
+
+@blueprint.route('/teacher/questions/delete/<exam_id>/<q_id>', methods=['POST'])
+def delete_question(exam_id, q_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    question = RealQuestion.query.filter_by(id=q_id).first()
+
+    if not question:
+        flash("سوال یافت نشد.")
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or\
+            Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
+        flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    db.session.delete(question)
+    db.session.commit()
+    flash("سوال حذف شد.")
+    return redirect(url_for('teachers.questions', id=exam_id))
