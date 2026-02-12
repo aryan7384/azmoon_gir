@@ -4,9 +4,7 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationE
 from apps.database import db
 from .models import User
 
-
-__all__ = ['RegisterForm',
-           'LoginForm',
+__all__ = ['LoginForm',
            'UpdateProfileForm',
            'UpdatePasswordForm',
            'AnswerForm',
