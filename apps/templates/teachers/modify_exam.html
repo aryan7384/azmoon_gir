@@ -13,6 +13,7 @@
 <h1>مشخصات آزمون را در اینجا تغییر دهید</h1>
 <a href="{{ url_for('teachers.dashboard') }}">بازگشت به منوی اصلی</a>
 {% include 'form-errors.html' %}
+{% include 'flash-messages.html' %}
 <form action="" method="POST">
     {{ form.csrf_token }}
     {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
