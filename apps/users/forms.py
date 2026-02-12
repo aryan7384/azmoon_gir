@@ -41,7 +41,7 @@ class PasswordResetForm(FlaskForm):
     def validate_username(self, field):
         user = db.session.execute(db.select(User).where(User.username == field.data)).scalar()
         if not user:
-            raise ValidationError("Username does not exist")
+            raise ValidationError("کاربر یافت نشد.")
 
     def validate_email(self, field):
         email = db.session.execute(db.select(User).where(User.email == field.data)).scalar()
