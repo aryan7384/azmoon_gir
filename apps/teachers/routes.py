@@ -161,7 +161,9 @@ def modify_azmoon(id):
     for i in users_records:
         users.append(i.username)
     form.users.data = os.linesep.join(users)
-    form.is_available.data = exam.is_available
+    if exam.is_available:
+        flash("امکان تغییر اطلاعات آزمون پس از ثبت نهایی ان وجود ندارد.")
+        return redirect(url_for("teachers.dashboard"))
     return render_template("teachers/modify_exam.html",
                            form=form)
 
