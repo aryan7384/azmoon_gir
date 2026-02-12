@@ -19,9 +19,12 @@
     <br>
     {{ form.name.label }}: {{ form.name }}
     <br>
-    <pre dir="ltr">رمز عبور کاربر جدید به این صورت تنظیم میشود:
-    # + username + 123</pre>
-    {{ form.submit }}
+    <div>
+        <pre dir="ltr">رمز عبور کاربر جدید به این صورت تنظیم میشود:
+        # + username + 123</pre>
+    </div>
+    <br>
+    {{ form.submit(style="float:down;") }}
 </form>
 </body>
 </html>
