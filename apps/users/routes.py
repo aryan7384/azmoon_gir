@@ -296,7 +296,7 @@ def result_for(name):
     
     else:
         z_score = (result.percent - avg) / std
-        std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 5000)}{os.linesep}تراز قلمچی: {round(z_score * 1000 + 5000)}"
+        std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 5000)}<br>تراز قلمچی: {round(z_score * 1000 + 5000)}"
     return render_template("users/azmoon/result_for.html",
                            result=result,
                            name=user.username,
