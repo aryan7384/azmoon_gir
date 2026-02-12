@@ -13,23 +13,6 @@ __all__ = ['RegisterForm',
            'PasswordResetForm',]
 
 
-class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(),
-                                                   Length(min=5, max=20)])
-    email = EmailField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
-
-    def validate_email(self, field):
-        user = db.session.execute(db.select(User).where(User.email == field.data)).scalar()
-        if user:
-            raise ValidationError("Email already exists")
-
-    def validate_username(self, field):
-        user = db.session.execute(db.select(User).where(User.username == field.data)).scalar()
-        if user:
-            raise ValidationError(f"username {field.data} already exists")
-
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
