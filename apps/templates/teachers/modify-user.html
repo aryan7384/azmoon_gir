@@ -21,7 +21,11 @@
     <br>
     {{ form.email.label }}: {{ form.email }}
     <br>
-    {{ form.password.label }}: {{ form.password }}
+    {{ form.password.label }}: {{ form.password(style="direction: ltr;") }}
+    <p>
+        توجه: امکان تغییر ندادن رمز عبور وجود ندارد.
+        در صورت خالی گذاشتن فیلد، رمز عبور برداشته می شود.
+    </p>
     <br>
     <input type="submit" value="تغییر اطلاعات">
 </form>
