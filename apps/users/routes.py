@@ -23,6 +23,8 @@ def get_user(username):
 
 def calculate_result(user):
     user_azmoon = Azmoon.query.filter_by(id=user.azmoon_id).first()
+    user.azmoon_id = 0
+    db.session.commit()
     questions = RealQuestion.query.filter_by(azmoon_id=user_azmoon.id).all()
     total_questions = len(questions)
 
