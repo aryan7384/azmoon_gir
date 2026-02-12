@@ -11,6 +11,7 @@
 </head>
 <body>
 <h1>سوالات آزمون {{exam.name}}</h1>
+{% include 'flash-messages.html' %}
 <a href="{{ url_for('teachers.dashboard') }}">بازگشت به صفحه اصلی</a>
 <div>
     <a href="{{ url_for('teachers.add_question', exam_id=exam.id) }}">افزودن سوال</a>
@@ -20,6 +21,9 @@
         <br>
     عنوان: {{ question.title }}
         <br>
+        <form action="{{ url_for("teachers.delete_question", exam_id=exam.id, q_id=question.id) }}" method="post">
+        <input type="submit" value="حذف سوال">
+        </form>
     {% endfor %}
     {% if not questions %}
 	<p>سوالی یافت نشد!</p>
