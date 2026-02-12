@@ -103,6 +103,12 @@ def delete_azmoon(id):
         return redirect(url_for('teachers.dashboard'))
 
     # TODO: remove azmoon_id from any user that had the same azmoon_id
+    users = User.query.filter_by(azmoon_id = azmoon.id).all()
+    for i in users:
+        i.azmoon_id = 0
+
+    db.session.commit()
+
     db.session.delete(azmoon)
     db.session.commit()
     flash(f"آزمون {azmoon.name}با موفقیت حذف شد.")
