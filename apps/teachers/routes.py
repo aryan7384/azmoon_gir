@@ -234,7 +234,7 @@ def modify_user(id):
             return redirect(url_for('teachers.modify_user'), id=id)
 
         if User.query.where(User.email == form.email.data,
-                            User.email != user.email):
+                            User.email != user.email).first():
             flash("ایمیل تکراری است.")
             return redirect(url_for('teachers.modify_user', id=id))
 
