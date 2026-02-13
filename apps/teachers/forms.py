@@ -80,6 +80,6 @@ class ModifyQuestionForm(FlaskForm):
                                                 Length(max=400)])
 
 
-class AddOptionForm(FlaskForm):
+class AddChoiceForm(FlaskForm):
     text = StringField('متن گزینه', validators=[DataRequired()])
     is_correct = BooleanField('آیا جواب درست است؟', validators=[DataRequired()])
