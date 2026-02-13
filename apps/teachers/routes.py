@@ -335,7 +335,7 @@ def delete_question(exam_id, q_id):
     return redirect(url_for('teachers.questions', id=exam_id))
 
 
-@blueprint.route("/teacher/questions/modify/<exam_id>/<q_id>")
+@blueprint.route("/teacher/questions/modify/<exam_id>/<q_id>", methods=['GET', 'POST'])
 def modify_question(exam_id, q_id):
     if result := check_teacher_logged_in():
         return result
