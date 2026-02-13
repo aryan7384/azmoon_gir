@@ -362,3 +362,44 @@ def modify_question(exam_id, q_id):
 
     form.title.data = question.title
     return render_template("teachers/modify-question.html", form=form)
+
+
+@blueprint.route("/teacher/questions/add-choice/<exam_id>/<q_id>", methods=['GET', 'POST'])
+def add_choice(exam_id, q_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    question = RealQuestion.query.filter_by(id=q_id).first()
+
+    if not question:
+        flash("سوال یافت نشد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
+            Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
+        flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    form = AddChoiceForm()
+    if form.validate_on_submit():
+        if RealOption.query.filter_by(question_id=q_id,
+                                      text=form.text.data).first():
+            flash("متن گزینه تکراری است.", category="error")
+            return redirect(url_for('teachers.questions', id=exam_id))
+
+        if form.is_correct.data and RealOption.query.filter_by(question_id=q_id,
+                                                               is_correct=True).first():
+            flash("نمیتوانید سوالی با ۲ گزینه صحیح داشته باشید.", category="error")
+            return redirect(url_for('teachers.questions', id=exam_id))
+
+        choice = RealOption(question_id=q_id,
+                            text=form.text.data,
+                            is_correct=form.is_correct.data)
+        db.session.add(choice)
+        db.session.commit()
+        flash("گزینه اضافه شد.", category="success")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    return render_template("teachers/add-choice.html",
+                           form=form)
