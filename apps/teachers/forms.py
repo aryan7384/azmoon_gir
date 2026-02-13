@@ -73,3 +73,8 @@ class ModifyExamForm(FlaskForm):
 class AddQuestionForm(FlaskForm):
     title = StringField('متن سوال', validators=[DataRequired(),
                                                 Length(max=400)])
+
+
+class ModifyQuestionForm(FlaskForm):
+    title = StringField('متن سوال', validators=[DataRequired(),
+                                                Length(max=400)])
