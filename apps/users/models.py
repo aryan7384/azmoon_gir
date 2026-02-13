@@ -22,7 +22,7 @@ class User(BaseModel):
     __tablename__ = 'user'
 
     username = mapped_column(String(50), unique=True, nullable=False)
-    email = mapped_column(String(80), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password = mapped_column(String(256), nullable=False)
     name: Mapped[str] = mapped_column(unique=False, nullable=False)
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
