@@ -306,7 +306,7 @@ def add_question(exam_id):
         db.session.add(new_question)
         db.session.commit()
         flash("سوال ثبت شد.")
-        return redirect(url_for('teachers.dashboard'))
+        return redirect(url_for('teachers.questions', id=exam_id))
     return render_template("teachers/add-question.html",
                            form=form,
                            exam=exam)
