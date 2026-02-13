@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ثیت گزینه جدید</title>
+</head>
+<body>
+{% include 'flash-messages.html' %}
+<form action="" method="POST" novalidate="novalidate">
+    {{ form.csrf_token }}
+    {{ form.text.label }}: {{ form.text }}
+    <br>
+    {{ form.is_correct.label }}: {{ form.is_correct }}
+    <br>
+    <input type="submit" value="ثبت گزینه">
+</form>
+</body>
+</html>
