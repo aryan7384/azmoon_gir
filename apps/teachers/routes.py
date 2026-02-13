@@ -334,3 +334,32 @@ def delete_question(exam_id, q_id):
     db.session.commit()
     flash("سوال حذف شد.")
     return redirect(url_for('teachers.questions', id=exam_id))
+
+
+@blueprint.route("/teacher/questions/modify/<exam_id>/<q_id>")
+def modify_question(exam_id, q_id):
+    if result := check_teacher_logged_in():
+        return result
+    
+    question = RealQuestion.query.filter_by(id=q_id).first()
+
+    if not question:
+        flash("سوال یافت نشد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or\
+            Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
+        flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    form = ModifyQuestionForm()
+    if form.validate_on_submit():
+        question.title = form.title.data
+        db.session.commit()
+        flash("سوال با موفقیت تغییر یافت.")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    form.title.data = question.title
+    return render_template("teachers/questions.html", form=form)
