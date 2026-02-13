@@ -102,7 +102,6 @@ def delete_azmoon(id):
         flash("شما دسترسی به این آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
-    # TODO: remove azmoon_id from any user that had the same azmoon_id
     users = User.query.filter_by(azmoon_id = azmoon.id).all()
     for i in users:
         i.azmoon_id = 0
