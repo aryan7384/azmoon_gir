@@ -361,4 +361,4 @@ def modify_question(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     form.title.data = question.title
-    return render_template("teachers/questions.html", form=form)
+    return render_template("teachers/modify-question.html", form=form)
