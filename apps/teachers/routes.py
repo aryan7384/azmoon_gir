@@ -322,6 +322,7 @@ def delete_question(exam_id, q_id):
 
     if not question:
         flash("سوال یافت نشد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or\
