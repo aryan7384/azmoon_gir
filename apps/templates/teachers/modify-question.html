@@ -17,5 +17,6 @@
         {{ form.title.label }}: {{ form.title }}
         <input type="submit" value="ثبت تغییرات">
     </form>
+    <a href="{{ url_for('teachers.add_choice', exam_id=exam_id, q_id=q_id) }}">ثبت گزینه</a>
 </body>
 </html>
