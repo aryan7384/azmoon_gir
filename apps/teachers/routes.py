@@ -357,7 +357,7 @@ def modify_question(exam_id, q_id):
     if form.validate_on_submit():
         question.title = form.title.data
         db.session.commit()
-        flash("سوال با موفقیت تغییر یافت.")
+        flash("سوال با موفقیت تغییر یافت.", category="success")
         return redirect(url_for('teachers.questions', id=exam_id))
 
     form.title.data = question.title
