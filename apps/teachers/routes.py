@@ -376,9 +376,9 @@ def add_choice(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
-            Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
-        flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
+    if Azmoon.query.filter_by(id=exam_id).first().id != teacher.id or \
+        question.azmoon_id != exam_id:
+        flash("شما دسترسی به این آزمون یا سوال را ندارید.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
     form = AddChoiceForm()
