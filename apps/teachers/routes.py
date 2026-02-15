@@ -386,7 +386,7 @@ def add_choice(exam_id, q_id):
         if RealOption.query.filter_by(question_id=q_id,
                                       text=form.text.data).first():
             flash("متن گزینه تکراری است.", category="error")
-            return redirect(url_for('teachers.questions', id=exam_id))
+            return redirect(url_for('teachers.add_choice', exam_id=exam_id, q_id=q_id))
 
         if form.is_correct.data and RealOption.query.filter_by(question_id=q_id,
                                                                is_correct=True).first():
