@@ -25,7 +25,7 @@
         <input type="submit" value="حذف سوال">
         </form>
         <a href="{{ url_for('teachers.modify_question', exam_id=exam.id, q_id=question.id) }}">تغییر مشخصات سوال</a>
-    <hr>
+        <hr>
     {% endfor %}
     {% if not questions %}
 	<p>سوالی یافت نشد!</p>
