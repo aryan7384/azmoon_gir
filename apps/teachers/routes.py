@@ -372,7 +372,7 @@ def add_choice(exam_id, q_id):
     question = RealQuestion.query.filter_by(id=q_id).first()
 
     if not question:
-        flash("سوال یافت نشد.")
+        flash("سوال یافت نشد.", category="error")
         return redirect(url_for('teachers.questions', id=exam_id))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
