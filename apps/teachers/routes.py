@@ -64,7 +64,7 @@ def register_azmoon():
         users = form.users.data.strip().splitlines()
         for i in users:
             user = User.query.filter_by(teacher_id=teacher.id,
-                                    username=i).first()
+                                        username=i).first()
             if not user:
                 flash(f"کاربر {i} برای معلم دیگری ثبت شده.")
                 return redirect(url_for('teachers.register_azmoon'))
@@ -102,7 +102,7 @@ def delete_azmoon(id):
         flash("شما دسترسی به این آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
-    users = User.query.filter_by(azmoon_id = azmoon.id).all()
+    users = User.query.filter_by(azmoon_id=azmoon.id).all()
     for i in users:
         i.azmoon_id = 0
 
@@ -215,6 +215,7 @@ def delete_user(id):
     flash(f"کاربر {user.name} با موفقیت حذف شد.")
     return redirect(url_for('teachers.dashboard'))
 
+
 @blueprint.route('/teacher/users/modify/<id>', methods=['GET', 'POST'])
 def modify_user(id):
     if result := check_teacher_logged_in():
@@ -324,7 +325,7 @@ def delete_question(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or\
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
             Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
@@ -339,16 +340,15 @@ def delete_question(exam_id, q_id):
 def modify_question(exam_id, q_id):
     if result := check_teacher_logged_in():
         return result
-    
+
     question = RealQuestion.query.filter_by(id=q_id).first()
 
     if not question:
         flash("سوال یافت نشد.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
-    
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or\
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
             Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
@@ -379,7 +379,7 @@ def add_choice(exam_id, q_id):
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if Azmoon.query.filter_by(id=exam_id).first().id != teacher.id or \
-        str(question.azmoon_id) != exam_id:
+            str(question.azmoon_id) != exam_id:
         flash("شما دسترسی به این آزمون یا سوال را ندارید.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
@@ -407,3 +407,42 @@ def add_choice(exam_id, q_id):
 
     return render_template("teachers/add-choice.html",
                            form=form)
+
+
+@blueprint.route("/teacher/questions/delete-option/<exam_id>/<q_id>/<option_id>", methods=['POST'])
+def delete_option(exam_id, q_id, option_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    exam = Azmoon.query.filter_by(id=exam_id).first()
+    if not exam:
+        flash("آزمون یافت نشد.", category="error")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if exam.teacher_id != teacher.id:
+        flash("شما دسترسی به این آزمون ندارید.", category="error")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    question = RealQuestion.query.filter_by(id=q_id).first()
+    if not question:
+        flash("سوال یافت نشد.", category="error")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    if str(question.azmoon_id) != exam_id:
+        flash("سوال برای شما نیست یا ای دی ازمون با سوال مطابقت ندارد.", category="error")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    choice = RealOption.query.filter_by(id=option_id).first()
+    if not choice:
+        flash("ایدی گزینه یافت نشد.", category="error")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    if str(choice.question_id) != q_id:
+        flash("آی دی گزینه برای شما نیست یا سوال با گزینه مطابقت ندارد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
+
+    db.session.delete(choice)
+    db.session.commit()
+    flash("گزینه با موفقیت حذف شد.", category="success")
+    return redirect(url_for('teachers.questions', id=exam_id))
