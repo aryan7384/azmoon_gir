@@ -300,6 +300,10 @@ def add_question(exam_id):
         flash("شما دسترسی به آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
+    if exam.is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
+
     form = AddQuestionForm()
     if form.validate_on_submit():
         if RealQuestion.query.filter_by(title=form.title.data,
@@ -334,6 +338,10 @@ def delete_question(exam_id, q_id):
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
 
+    if Azmoon.query.filter_by(id=exam_id).is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
+
     db.session.delete(question)
     db.session.commit()
     flash("سوال حذف شد.")
@@ -356,6 +364,10 @@ def modify_question(exam_id, q_id):
             Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
+
+    if Azmoon.query.filter_by(id=exam_id).is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
 
     form = ModifyQuestionForm()
     if form.validate_on_submit():
@@ -388,6 +400,10 @@ def add_choice(exam_id, q_id):
             str(question.azmoon_id) != exam_id:
         flash("شما دسترسی به این آزمون یا سوال را ندارید.")
         return redirect(url_for('teachers.questions', id=exam_id))
+
+    if Azmoon.query.filter_by(id=exam_id).is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
 
     form = AddChoiceForm()
     if form.validate_on_submit():
@@ -447,6 +463,10 @@ def delete_option(exam_id, q_id, option_id):
     if str(choice.question_id) != q_id:
         flash("آی دی گزینه برای شما نیست یا سوال با گزینه مطابقت ندارد.")
         return redirect(url_for('teachers.questions', id=exam_id))
+
+    if Azmoon.query.filter_by(id=exam_id).is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
 
     db.session.delete(choice)
     db.session.commit()
