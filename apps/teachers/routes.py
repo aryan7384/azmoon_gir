@@ -276,9 +276,13 @@ def questions(id):
         return redirect(url_for('teachers.dashboard'))
 
     questions = RealQuestion.query.filter_by(id=id).all()
+    choices = {}
+    for i in questions:
+        choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
     return render_template("teachers/questions.html",
                            questions=questions,
-                           exam=exam)
+                           exam=exam,
+                           choices=choices)
 
 
 @blueprint.route('/teacher/questions/add/<exam_id>', methods=['GET', 'POST'])
