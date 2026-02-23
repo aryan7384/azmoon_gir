@@ -21,6 +21,22 @@
         <br>
     عنوان: {{ question.title }}
         <br>
+        <div>
+            <h2>گزینه ها</h2>
+            <a href="{{ url_for('teachers.add_choice', exam_id=exam.id, q_id=question.id) }}">ثبت گزینه</a>
+            {% for choice in choices[question.id] %}
+                <p>{{ choice.text }}
+                {% if choice.is_correct %}
+                    <span>(گزینه درست)</span>
+                {% endif %}
+                </p>
+                <form action="{{ url_for("teachers.delete_option",
+                                         exam_id=exam.id, q_id=question.id, option_id=choice.id) }}" method="post">
+                <input type="submit" value="حذف گزینه">
+
+                </form>
+            {% endfor %}
+        </div>
         <form action="{{ url_for("teachers.delete_question", exam_id=exam.id, q_id=question.id) }}" method="post">
         <input type="submit" value="حذف سوال">
         </form>
