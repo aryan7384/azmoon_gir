@@ -275,7 +275,7 @@ def questions(id):
         flash("شما دسترسی به آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
-    questions = RealQuestion.query.filter_by(id=id).all()
+    questions = RealQuestion.query.filter_by(azmoon_id=id).all()
     choices = {}
     for i in questions:
         choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
