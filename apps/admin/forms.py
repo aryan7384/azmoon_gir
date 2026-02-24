@@ -21,8 +21,3 @@ class RegisterTeacherForm(FlaskForm):
         if Teacher.query.filter_by(username=field.data).first():
             raise ValidationError("نام کاربری تکراری است.")
         
-
-class ModifyTeacherForm(FlaskForm):
-    username = StringField("نام کاربری", validators=[DataRequired()])
-    password = StringField("رمز عبور", validators=[DataRequired()])
-        
