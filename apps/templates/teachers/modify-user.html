@@ -14,14 +14,10 @@
 <h1>تغییر اطلاعات و رمز عبور دانش اموز</h1>
 <form action="" method="post">
     {{ form.csrf_token }}
-    {{ form.username.label }}: {{ form.username }}
-    <br>
     {{ form.name.label }}: {{ form.name }}
     <br>
     {{ form.email.label }}: {{ form.email }}
     <br>
-    {{ form.password.label }}: {{ form.password(style="direction: ltr;") }}
-    <p>
         توجه: امکان تغییر ندادن رمز عبور وجود ندارد.
         در صورت خالی گذاشتن فیلد، رمز عبور برداشته می شود.
     </p>
