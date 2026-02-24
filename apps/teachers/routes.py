@@ -238,11 +238,6 @@ def modify_user(id):
     form = ModifyUserForm()
     if form.validate_on_submit():
         # check form datas
-        if User.query.where(User.username == form.username.data,
-                            User.username != user.username).first():
-            flash("نام کاربری تکراری است.")
-            return redirect(url_for('teachers.modify_user'), id=id)
-
         if User.query.where(User.email == form.email.data,
                             User.email != user.email).first():
             flash("ایمیل تکراری است.")
@@ -250,14 +245,10 @@ def modify_user(id):
 
         user.name = form.name.data
         user.email = form.email.data
-        user.username = form.username.data
-        user.password = hashing.hash_value(form.password.data,
-                                           salt=os.getenv("SALT"))
         db.session.commit()
         flash("تغییرات اعمال شد.")
         return redirect(url_for('teachers.dashboard'))
 
-    form.username.data = user.username
     form.email.data = user.email
     form.name.data = user.name
     return render_template('teachers/modify-user.html',
@@ -412,12 +403,11 @@ def add_choice(exam_id, q_id):
         return redirect(url_for('teachers.dashboard'))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
-    if Azmoon.query.filter_by(id=exam_id).first().id != teacher.id or \
-            str(question.azmoon_id) != exam_id:
+    if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or str(question.azmoon_id) != exam_id:
         flash("شما دسترسی به این آزمون یا سوال را ندارید.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
-    if Azmoon.query.filter_by(id=exam_id).is_available:
+    if Azmoon.query.filter_by(id=exam_id).first().is_available:
         flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
