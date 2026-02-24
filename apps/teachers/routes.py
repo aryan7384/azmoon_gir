@@ -131,6 +131,10 @@ def modify_azmoon(id):
 
     form = ModifyExamForm()
     if form.validate_on_submit():
+        if exam.is_available:
+            flash("امکان تغییر اطلاعات آزمون پس از ثبت نهایی ان وجود ندارد.")
+            return redirect(url_for("teachers.dashboard"))
+
         all_exams = Azmoon.query.where(Azmoon.name != exam.name,
                                        Azmoon.teacher_id == teacher.id).all()
         names = []
@@ -342,7 +346,7 @@ def delete_question(exam_id, q_id):
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
 
-    if Azmoon.query.filter_by(id=exam_id).is_available:
+    if Azmoon.query.filter_by(id=exam_id).first().is_available:
         flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
@@ -373,7 +377,7 @@ def modify_question(exam_id, q_id):
         flash('شما دسترسی به این ازمون را ندارید یا ایدی سوال برای این ازمون نیست.')
         return redirect(url_for('teachers.questions', id=exam_id))
 
-    if Azmoon.query.filter_by(id=exam_id).is_available:
+    if Azmoon.query.filter_by(id=exam_id).first().is_available:
         flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
@@ -476,7 +480,7 @@ def delete_option(exam_id, q_id, option_id):
         flash("آی دی گزینه برای شما نیست یا سوال با گزینه مطابقت ندارد.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
-    if Azmoon.query.filter_by(id=exam_id).is_available:
+    if Azmoon.query.filter_by(id=exam_id).first().is_available:
         flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
