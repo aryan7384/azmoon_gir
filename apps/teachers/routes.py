@@ -332,6 +332,10 @@ def delete_question(exam_id, q_id):
         flash("سوال یافت نشد.")
         return redirect(url_for('teachers.questions', id=exam_id))
 
+    if not Azmoon.query.filter_by(id=exam_id).first():
+        flash("آزمون وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
+
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
             Azmoon.query.filter_by(id=exam_id).first().id != question.azmoon_id:
@@ -358,6 +362,10 @@ def modify_question(exam_id, q_id):
     if not question:
         flash("سوال یافت نشد.")
         return redirect(url_for('teachers.questions', id=exam_id))
+
+    if not Azmoon.query.filter_by(id=exam_id).first():
+        flash("آزمون وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if Azmoon.query.filter_by(id=exam_id).first().teacher_id != teacher.id or \
@@ -394,6 +402,10 @@ def add_choice(exam_id, q_id):
     if not question:
         flash("سوال یافت نشد.", category="error")
         return redirect(url_for('teachers.questions', id=exam_id))
+
+    if not Azmoon.query.filter_by(id=exam_id).first():
+        flash("آزمون وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
 
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     if Azmoon.query.filter_by(id=exam_id).first().id != teacher.id or \
