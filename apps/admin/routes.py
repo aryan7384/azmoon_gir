@@ -94,29 +94,3 @@ def removeTeacher(teacher_id):
 
     flash("معلم حذف شد.")
     return redirect(url_for("admin.admin_homepage"))
-
-
-@blueprint.route("/admin/modify-teacher/<teacher_id>", methods=["GET", "POST"])
-def modifyTeacher(teacher_id):
-    if session.get("admin_logged_in") != True:
-        flash("اول رمز عبور را وارد کنید.")
-        return redirect(url_for('admin.login'))
-
-    teacher = Teacher.query.filter_by(id=teacher_id).first()
-    form = ModifyTeacherForm()
-
-    if form.validate_on_submit():
-        if Teacher.query.where(Teacher.username == form.username.data,
-                               Teacher.id != teacher_id).first():
-            flash("نام کاربری تکراری است.")
-            return redirect(url_for("admin.modifyTeacher", teacher_id=teacher_id))
-        teacher.username = form.username.data
-        teacher.password = hashing.hash_value(form.password.data,
-                                              salt=os.getenv("SALT")
-                                              )
-        db.session.commit()
-        flash(f"اطلاعات {teacher.username} به روز رسانی شد.")
-        return redirect(url_for("admin.manageTeachers"))
-
-    form.username.data = teacher.username
-    return render_template("admin/modify-teacher.html", form=form)
