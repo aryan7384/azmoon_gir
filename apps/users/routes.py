@@ -6,6 +6,8 @@ from ..extensions import *
 import os
 import secrets
 import dotenv
+import random
+from flask_mailman import EmailMessage
 
 dotenv.load_dotenv()
 
@@ -125,10 +127,9 @@ def logout():
         session.clear()
         return redirect(url_for('users.login'))
 
-    session.permanent = False
-    session.clear()
+    session.pop("username")
     flash("با موفقیت خارج شدید.", "success")
-    return redirect(url_for("users.login"))
+    return redirect(url_for("home.home"))
 
 
 @blueprint.route('/updatepassword/', methods=["GET", "POST"])
@@ -169,13 +170,20 @@ def forgot_password():
         email = form.email.data
         if user := User.query.filter(User.username == username,
                                      User.email == email).first():
-            user.password = hashing.hash_value("123456", salt=os.getenv("SALT"))
-            # user.password = hashing.hash_value(password := str(random.randint(10000000, 99999999)))
-            # send_new_password(password)
+            user.password = hashing.hash_value(password := str(random.randint(10000000, 99999999)),
+                                               salt=os.getenv("SALT"))
+            body = "<h1>ذهن ران</h1><h2>باز نشانی رمز عبور</h2><p style='direction: rtl'>رمز جدید پنل شما:" \
+                   f"{password}</p>"
+            msg = EmailMessage(
+                subject='بازنشانی رمز عبور',
+                body=body,
+                to=[email]
+            )
+            msg.content_subtype = "html"
+            msg.send()
             db.session.commit()
-            flash("رمز حساب کاربری به 123456 تغییر داده شد. بعد از ورود به حساب کاربری حتما ان را تغییر دهید.",
+            flash("رمز جدید به ایمیل شما ارسال شد. بعد از ورود به حساب کاربری حتما ان را تغییر دهید.",
                   "success")
-            # flash("new password has been sent to the account's phone number.")
             return redirect(url_for("users.login"))
         flash("ایمیل و نام کاربری مربوط به یک حساب مشترک نیستند.", "danger")
         return redirect(url_for("users.forgot_password"))
@@ -196,8 +204,7 @@ def azmoon():
         return redirect(url_for('users.login'))
 
     has_exam = Azmoon.query.filter(Azmoon.id == get_user(username).azmoon_id,
-                                   Azmoon.is_available == True).first() and \
-        not get_user(username).answered
+                                   Azmoon.is_available == True).first() and not get_user(username).answered
     return render_template("users/azmoon/entry_page.html",
                            username=username, has_exam=has_exam,
                            Azmoon=Azmoon,
@@ -292,11 +299,10 @@ def result_for(name):
 
     std = calc_S(scores)
     if std == 0:
-        std_sample_text = "اندکی منتظر بمانید تا باقی دانش اموزان نیز ازمون را تمام کنند."
-    
-    else:
-        z_score = (result.percent - avg) / std
-        std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 5000)}<br>تراز قلمچی: {round(z_score * 1000 + 5000)}"
+        std = 1
+
+    z_score = (result.percent - avg) / std
+    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 5000)}\r\nتراز قلمچی: {round(z_score * 1000 + 5000)}"
     return render_template("users/azmoon/result_for.html",
                            result=result,
                            name=user.username,
