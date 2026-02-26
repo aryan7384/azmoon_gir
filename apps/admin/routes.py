@@ -87,8 +87,12 @@ def removeTeacher(teacher_id):
     if not (session.get("admin_logged_in") == True):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
-    
+
     teacher = Teacher.query.filter_by(id=teacher_id).first()
+    users = User.query.filter_by(teacher_id=teacher.id).all()
+    for user in users:
+        db.session.delete(user)
+        
     db.session.delete(teacher)
     db.session.commit()
 
