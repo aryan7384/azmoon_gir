@@ -5,8 +5,7 @@ from apps.users.models import Teacher
 
 
 __all__ = ["LoginForm",
-           "RegisterTeacherForm",
-           "ModifyTeacherForm"]
+           "RegisterTeacherForm"]
 
 
 class LoginForm(FlaskForm):
@@ -20,4 +19,3 @@ class RegisterTeacherForm(FlaskForm):
     def validate_username(self, field):
         if Teacher.query.filter_by(username=field.data).first():
             raise ValidationError("نام کاربری تکراری است.")
-        
