@@ -12,6 +12,7 @@ from flask_migrate import Migrate
 import random
 import os
 import dotenv
+from .extensions import mail
 
 
 def register_blueprints(application: Flask):
@@ -57,6 +58,8 @@ app.permanent_session_lifetime = timedelta(days=float(os.getenv("SESSION_LIFETIM
                                            hours=float(os.getenv("SESSION_LIFETIME_HOURS")),
                                            minutes=float(os.getenv("SESSION_LIFETIME_MINUTES")))
 
+mail.init_app(app)
+
 register_blueprints(app)
 register_error_handlers(app)
 register_shell_context(app)
@@ -66,6 +69,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 hashing.init_app(app)
+
 
 
 @app.template_filter('shuffle')

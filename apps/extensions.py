@@ -1,9 +1,6 @@
 from flask_hashing import Hashing
-import math
-# from kavenegar import KavenegarAPI
-# import os, dotenv
-# dotenv.load_dotenv()
-__all__ = ["hashing", "calc_S"]
+from flask_mailman import Mail
+__all__ = ["hashing", "calc_S", "mail"]
 
 
 def calc_S(scores):
@@ -14,4 +11,4 @@ def calc_S(scores):
 
 
 hashing = Hashing()
-# sms_api = KavenegarAPI(os.getenv("KAVENEGAR"))
+mail = Mail()
