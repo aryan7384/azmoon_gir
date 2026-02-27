@@ -6,6 +6,7 @@ from ..extensions import hashing
 from hashlib import sha256
 import os
 import dotenv
+import secrets
 
 dotenv.load_dotenv()
 
@@ -54,9 +55,13 @@ def manageTeachers():
                         "id": teacher.id}
         teachers.append(teacher_dict)
 
+
+    # generating csrf_token
+    session['csrf_token'] = secrets.token_urlsafe(32)
     return render_template("admin/manage-teachers.html",
                            teachers=teachers,
-                           len=len)
+                           len=len,
+                           csrf_token=session['csrf_token'])
 
 
 @blueprint.route("/admin/register-teacher", methods=["GET", "POST"])
@@ -83,11 +88,15 @@ def registerTeacher():
                            form=form)
 
 
-@blueprint.route("/admin/remove-teacher/<teacher_id>")
+@blueprint.route("/admin/remove-teacher/<teacher_id>", methods=["POST"])
 def removeTeacher(teacher_id):
     if not (session.get("admin_logged_in") == True):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
+
+    if session.get("csrf_token") != request.form["csrf_token"]:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('admin.admin_homepage'))
 
     teacher = Teacher.query.filter_by(id=teacher_id).first()
     users = User.query.filter_by(teacher_id=teacher.id).all()

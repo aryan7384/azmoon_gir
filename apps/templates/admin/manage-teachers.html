@@ -27,7 +27,11 @@
                             دانش اموزی برای این معلم ثبت نشده است.
                             {% endif %}
                             <br>
-                            <a href="{{ url_for("admin.removeTeacher", teacher_id=teacher["id"]) }}">حذف معلم</a>
+                            <form method="post" action="{{ url_for('admin.removeTeacher',
+                                    teacher_id=teacher.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <input type="submit" value="حذف معلم">
+                            </form>
                         </div>
                     {% endfor %}
                 {% else %}
