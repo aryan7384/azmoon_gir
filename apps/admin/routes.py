@@ -48,14 +48,15 @@ def manageTeachers():
         students = User.query.where(
                             User.teacher_id == teacher.id
                         ).all()[:3]
-        students = map(lambda s: s.name, students)
+        students = set(map(lambda s: s.name, students))
         teacher_dict = {"username": teacher.username,
                         "students": students,
                         "id": teacher.id}
         teachers.append(teacher_dict)
 
     return render_template("admin/manage-teachers.html",
-                           teachers=teachers)
+                           teachers=teachers,
+                           len=len)
 
 
 @blueprint.route("/admin/register-teacher", methods=["GET", "POST"])
