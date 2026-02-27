@@ -19,6 +19,7 @@
             ایمیل: {{ user.email }}
             <a href="{{ url_for('teachers.modify_user', id=user.id) }}">تغییر اطلاعات</a>
             <form action="{{ url_for("teachers.delete_user", id=user.id) }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="submit" value="حذف دانش اموز">
             </form>
         </div>
@@ -38,6 +39,7 @@
             نام آزمون: {{ exam.name }}
             <a href="{{ url_for("teachers.modify_azmoon", id=exam.id) }}">تغییر نام و مشخصات</a>
             <form action="{{ url_for("teachers.delete_azmoon", id=exam.id) }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="submit" value="حذف">
             </form>
             <a href="{{ url_for('teachers.questions', id=exam.id) }}">سوالات آزمون</a>

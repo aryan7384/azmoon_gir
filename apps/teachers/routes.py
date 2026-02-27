@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, session, flash
+import secrets
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request
 from .forms import *
 from ..database import db
 from apps.users.models import *
@@ -48,9 +49,12 @@ def dashboard():
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     exams = Azmoon.query.filter_by(teacher_id=teacher.id).all()
     users = User.query.filter_by(teacher_id=teacher.id).all()
+
+    session['csrf_token'] = secrets.token_urlsafe(32)
     return render_template("teachers/teacher-panel.html",
                            exams=exams,
-                           users=users)
+                           users=users,
+                           csrf_token=session['csrf_token'])
 
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
@@ -91,6 +95,10 @@ def register_azmoon():
 def delete_azmoon(id):
     if result := check_teacher_logged_in():
         return result
+
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.dashboard'))
 
     azmoon = Azmoon.query.filter_by(id=id).first()
     if not azmoon:
@@ -203,6 +211,10 @@ def register_user():
 def delete_user(id):
     if result := check_teacher_logged_in():
         return result
+
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.dashboard'))
 
     user = User.query.filter_by(id=id).first()
     if not user:
