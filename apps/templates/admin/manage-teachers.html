@@ -21,7 +21,7 @@
                         <div>
                             نام کاربری: {{ teacher["username"] }}
                             <br>
-                            {% if teacher["students"] %}
+                            {% if len(teacher["students"]) %}
                             نام دانش اموزان: {{ ", ".join(teacher["students"]) }}
                             {% else %}
                             دانش اموزی برای این معلم ثبت نشده است.
