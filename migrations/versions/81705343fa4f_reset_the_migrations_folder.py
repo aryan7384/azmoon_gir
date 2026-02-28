@@ -1,8 +1,8 @@
-"""empty message
+"""reset the migrations folder
 
-Revision ID: c6e953dde679
+Revision ID: 81705343fa4f
 Revises: 
-Create Date: 2026-01-30 17:01:40.027440
+Create Date: 2026-02-28 22:46:40.901795
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c6e953dde679'
+revision = '81705343fa4f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,8 +35,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['teacher_id'], ['teacher.id'], name=op.f('fk_azmoon_teacher_id_teacher')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_azmoon')),
-    sa.UniqueConstraint('name', name=op.f('uq_azmoon_name'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_azmoon'))
     )
     op.create_table('real_question',
     sa.Column('title', sa.String(length=400), nullable=True),
@@ -49,8 +48,9 @@ def upgrade():
     )
     op.create_table('user',
     sa.Column('username', sa.String(length=50), nullable=False),
-    sa.Column('email', sa.String(length=80), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
     sa.Column('password', sa.String(length=256), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.Column('teacher_id', sa.Integer(), nullable=False),
     sa.Column('azmoon_id', sa.Integer(), nullable=True),
     sa.Column('answered', sa.Boolean(), nullable=False),
