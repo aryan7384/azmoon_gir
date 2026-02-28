@@ -32,13 +32,14 @@
                 </p>
                 <form action="{{ url_for("teachers.delete_option",
                                          exam_id=exam.id, q_id=question.id, option_id=choice.id) }}" method="post">
-                <input type="submit" value="حذف گزینه">
-
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="submit" value="حذف گزینه">
                 </form>
             {% endfor %}
         </div>
         <form action="{{ url_for("teachers.delete_question", exam_id=exam.id, q_id=question.id) }}" method="post">
-        <input type="submit" value="حذف سوال">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="submit" value="حذف سوال">
         </form>
         <a href="{{ url_for('teachers.modify_question', exam_id=exam.id, q_id=question.id) }}">تغییر مشخصات سوال</a>
         <hr>

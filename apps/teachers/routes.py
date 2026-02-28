@@ -286,10 +286,13 @@ def questions(id):
     choices = {}
     for i in questions:
         choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
+
+    session['csrf_token'] = secrets.token_urlsafe(32)
     return render_template("teachers/questions.html",
                            questions=questions,
                            exam=exam,
-                           choices=choices)
+                           choices=choices,
+                           csrf_token=session['csrf_token'])
 
 
 @blueprint.route('/teacher/questions/add/<exam_id>', methods=['GET', 'POST'])
@@ -332,6 +335,10 @@ def add_question(exam_id):
 def delete_question(exam_id, q_id):
     if result := check_teacher_logged_in():
         return result
+
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
 
     question = RealQuestion.query.filter_by(id=q_id).first()
 
@@ -453,6 +460,10 @@ def add_choice(exam_id, q_id):
 def delete_option(exam_id, q_id, option_id):
     if result := check_teacher_logged_in():
         return result
+
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.questions', id=exam_id))
 
     exam = Azmoon.query.filter_by(id=exam_id).first()
     if not exam:
