@@ -14,8 +14,8 @@
     <p>{{ question[1] }}. {{ question[0].title }}</p>
 
     <div>
-    {% for answer in zip(A.query.filter_by(question_id = question[0].id).all()[1:]|shuffle,
-         range(1, len_(A.query.filter_by(question_id = question[0].id).all()[1:]) + 1)) %}
+    {% for answer in zip(A.query.filter_by(question_id = question[0].id).all()|shuffle,
+         range(1, len_(A.query.filter_by(question_id = question[0].id).all()) + 1)) %}
 
         <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}">{{ answer[1] }}: {{ answer[0].text }}
         <br>
