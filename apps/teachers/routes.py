@@ -58,18 +58,35 @@ def dashboard():
         if user.teacher_id != teacher.id:
             continue
 
+        question = RealQuestion.query.filter_by(id=i.for_question).first()
+        exam_name = Azmoon.query.filter_by(id=question.azmoon_id).first().name
         new_answer = {"stdname": user.name,
-                      "question": RealQuestion.query.filter_by(id=i.for_question).first().title,
+                      "question": question.title,
+                      "exam_name": exam_name,
                       "answer": RealOption.query.filter_by(id=i.answer).first().text,
+                      ""
                       "is_correct":
                           "t" if RealOption.query.filter_by(id=i.answer).first().is_correct else "f"}
         answers.append(new_answer)
-    print(answers)
+
+    all_results = Result.query.all()
+    results = []
+
+    for i in all_results:
+        user = User.query.filter_by(id=i.for_student).first()
+        if user.teacher_id != teacher.id:
+            continue
+
+        results.append({"stdname": user.name,
+                        "examname": i.for_azmoon_name,
+                        "percent": i.percent})
+
     return render_template("teachers/teacher-panel.html",
                            exams=exams,
                            users=users,
                            csrf_token=session['csrf_token'],
-                           answers=answers)
+                           answers=answers,
+                           results=results,)
 
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
