@@ -70,7 +70,21 @@
 <div>
     <h2>پاسخ ها</h2>
     <div>
-
+        <table>
+            <tr>
+                <th>نام دانش آموز</th>
+                <th>سوال</th>
+                <th>جواب</th>
+            </tr>
+            {% for answer in answers %}
+                <tr>
+                <td>{{ answer['stdname'] }}</td>
+                <td>{{ answer['question'] }}</td>
+                <td class="{{ answer['is_correct'] }}">{{ answer['answer'] }}</td>
+                </tr>
+            {% endfor %}
+            
+        </table>
     </div>
 </div>
 <div>
