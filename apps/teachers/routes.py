@@ -51,10 +51,25 @@ def dashboard():
     users = User.query.filter_by(teacher_id=teacher.id).all()
 
     session['csrf_token'] = secrets.token_urlsafe(32)
+    answers = []
+    answers_list = Answer.query.all()
+    for i in answers_list:
+        user = User.query.filter_by(id=i.for_student).first()
+        if user.teacher_id != teacher.id:
+            continue
+
+        new_answer = {"stdname": user.name,
+                      "question": RealQuestion.query.filter_by(id=i.for_question).first().title,
+                      "answer": RealOption.query.filter_by(id=i.answer).first().text,
+                      "is_correct":
+                          "t" if RealOption.query.filter_by(id=i.answer).first().is_correct else "f"}
+        answers.append(new_answer)
+    print(answers)
     return render_template("teachers/teacher-panel.html",
                            exams=exams,
                            users=users,
-                           csrf_token=session['csrf_token'])
+                           csrf_token=session['csrf_token'],
+                           answers=answers)
 
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
