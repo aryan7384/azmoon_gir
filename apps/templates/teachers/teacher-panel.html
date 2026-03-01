@@ -19,6 +19,10 @@
         }
         .f {
             background-color: #c91515;
+            color: white;
+        }
+        td, th {
+            text-align: center;
         }
     </style>
 </head>
@@ -102,7 +106,7 @@
                 <tr>
                 <td>{{ result["examname"] }}</td>
                 <td>{{ result["stdname"] }}</td>
-                <td dir="ltr" style="text-align: right">{{ result["percent"] }}</td>
+                <td dir="ltr">{{ result["percent"] }}</td>
                 </tr>
             {% endfor %}
         </table>
