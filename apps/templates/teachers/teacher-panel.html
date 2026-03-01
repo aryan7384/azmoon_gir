@@ -72,12 +72,14 @@
     <div>
         <table>
             <tr>
+                <th>نام آزمون</th>
                 <th>نام دانش آموز</th>
                 <th>سوال</th>
                 <th>جواب</th>
             </tr>
             {% for answer in answers %}
                 <tr>
+                <td>{{ answer['exam_name'] }}</td>
                 <td>{{ answer['stdname'] }}</td>
                 <td>{{ answer['question'] }}</td>
                 <td class="{{ answer['is_correct'] }}">{{ answer['answer'] }}</td>
@@ -89,7 +91,22 @@
 </div>
 <div>
     <h2>کارنامه ها</h2>
-    <p>کارنامه ای یافت نشد!</p>
+    <div>
+        <table>
+            <tr>
+                <th>نام آزمون</th>
+                <th>نام دانش اموز</th>
+                <th>درصد</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                <td>{{ result["examname"] }}</td>
+                <td>{{ result["stdname"] }}</td>
+                <td dir="ltr" style="text-align: right">{{ result["percent"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 </body>
 </html>
