@@ -64,7 +64,6 @@ def dashboard():
                       "question": question.title,
                       "exam_name": exam_name,
                       "answer": RealOption.query.filter_by(id=i.answer).first().text,
-                      ""
                       "is_correct":
                           "t" if RealOption.query.filter_by(id=i.answer).first().is_correct else "f"}
         answers.append(new_answer)
