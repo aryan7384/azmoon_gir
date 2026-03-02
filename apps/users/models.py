@@ -9,6 +9,7 @@ __all__ = ["User",
            "RealOption",
            "Answer",
            "Result",
+           "UserState",
            "Teacher"]
 
 
