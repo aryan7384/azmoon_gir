@@ -30,7 +30,8 @@ class User(BaseModel):
     azmoon_id = mapped_column(
         Integer,
         ForeignKey('azmoon.id'),
-        nullable=True
+        nullable=True,
+        default=0
     )
 
     answered: Mapped[bool] = mapped_column(nullable=False, default=False)
