@@ -80,12 +80,25 @@ def dashboard():
                         "examname": i.for_azmoon_name,
                         "percent": i.percent})
 
+    states = []
+    for i in exams:
+        exam_states = i.users_state
+        exam_states_dict = []
+        for j in exam_states:
+            exam_states_dict.append(
+                {"exam_name": i.name,
+                 "student_name": j.user.name,
+                 "current": j.state}
+            )
+        states.extend(exam_states_dict)
+
     return render_template("teachers/teacher-panel.html",
                            exams=exams,
                            users=users,
                            csrf_token=session['csrf_token'],
                            answers=answers,
-                           results=results,)
+                           results=results,
+                           states=states)
 
 
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
