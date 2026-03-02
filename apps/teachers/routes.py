@@ -393,7 +393,7 @@ def delete_question(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     if Azmoon.query.filter_by(id=exam_id).first().is_available:
-        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        flash("امکان حذف سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
     db.session.delete(question)
@@ -424,7 +424,7 @@ def modify_question(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     if Azmoon.query.filter_by(id=exam_id).first().is_available:
-        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        flash("امکان تغییر سوال پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
     form = ModifyQuestionForm()
@@ -463,7 +463,7 @@ def add_choice(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     if Azmoon.query.filter_by(id=exam_id).first().is_available:
-        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        flash("امکان افزودن گزینه پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
     form = AddChoiceForm()
@@ -530,7 +530,7 @@ def delete_option(exam_id, q_id, option_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     if Azmoon.query.filter_by(id=exam_id).first().is_available:
-        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        flash("امکان حذف گزینه پس از ثبت شدن آزمون، وجود ندارد.")
         return redirect(url_for('teachers.dashboard'))
 
     db.session.delete(choice)
