@@ -36,8 +36,13 @@
         {% for user in users %}
         <div>
             شناسه: {{ user.id }}
+            <br>
+            نام کاربری: {{ user.username }}
+            <br>
             نام: {{ user.name }}
+            <br>
             ایمیل: {{ user.email }}
+            <br>
             <a href="{{ url_for('teachers.modify_user', id=user.id) }}">تغییر اطلاعات</a>
             <form action="{{ url_for("teachers.delete_user", id=user.id) }}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -57,7 +62,9 @@
         {% for exam in exams %}
         	<div>
             شناسه:{{ exam.id }}
+                <br>
             نام آزمون: {{ exam.name }}
+                <br>
             <a href="{{ url_for("teachers.modify_azmoon", id=exam.id) }}">تغییر نام و مشخصات</a>
             <form action="{{ url_for("teachers.delete_azmoon", id=exam.id) }}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
