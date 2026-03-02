@@ -112,6 +112,9 @@ def register_azmoon():
         if len(users) != 0:
             for user in users:
                 new_user = User.query.filter_by(username=user).first()
+                if not new_user.azmoon_id and not new_user.answered:
+                    flash(f"دانش آموز {new_user.name}یک آزمون فعال دارد.")
+                    return redirect(url_for('teachers.register_azmoon'))
                 new_user.azmoon_id = azmoon.id
                 db.session.commit()
 
