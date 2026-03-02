@@ -112,5 +112,24 @@
         </table>
     </div>
 </div>
+<div>
+    <h2>وضعیت دانش آموزان</h2>
+    <div>
+        <table>
+            <tr>
+                <th>نام آزمون</th>
+                <th>نام دانش اموز</th>
+                <th>وضعیت</th>
+            </tr>
+            {% for state in states %}
+                <tr>
+                    <td>{{ state["exam_name"] }}</td>
+                    <td>{{ state["student_name"] }}</td>
+                    <td>{{ state["current"] | safe}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 </body>
 </html>
