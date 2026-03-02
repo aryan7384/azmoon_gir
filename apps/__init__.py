@@ -38,6 +38,8 @@ def register_shell_context(application: Flask):
             "RealOption": RealOption,
             "RealQuestion": RealQuestion,
             "Answer": Answer,
+            "Result": Result,
+            "UserState": UserState,
             "admin_blueprint": admin_blueprint,
             "home_blueprint": home_blueprint,
             "users_blueprint": users_blueprint,
