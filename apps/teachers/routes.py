@@ -188,6 +188,11 @@ def modify_azmoon(id):
         exam.is_available = form.is_available.data
         db.session.commit()
 
+        students = exam.users
+        for i in students:
+            i.azmoon_id = 0
+            i.answered = True
+        db.session.commit()
         users = form.users.data.strip().splitlines()
         for user in users:
             user_record = User.query.filter_by(username=user).first()
