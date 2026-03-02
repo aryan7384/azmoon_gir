@@ -236,7 +236,10 @@ def register_user():
                         name=form.name.data,
                         email=form.email.data,
                         teacher_id=teacher.id,
-                        password=hashing.hash_value("#" + form.username.data + "123"))
+                        password=hashing.hash_value("#" + form.username.data + "123",
+                                                    salt=os.getenv("SALT")),
+                        answered=True,
+                        azmoon_id=0)
 
         db.session.add(new_user)
         db.session.commit()
