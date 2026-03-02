@@ -51,6 +51,10 @@ class User(BaseModel):
         cascade="all, delete-orphan"
     )
 
+    user_state: Mapped[List["UserState"]] = relationship(
+        "UserState",
+        back_populates="user",
+    )
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id}, {self.username})"
 
@@ -72,6 +76,10 @@ class Azmoon(BaseModel):
         back_populates="azmoon"
     )
 
+    users_state: Mapped[List["UserState"]] = relationship(
+        "UserState",
+        back_populates="azmoon",
+    )
 
 class RealQuestion(BaseModel):
     __tablename__ = 'real_question'
@@ -179,4 +187,20 @@ class Result(BaseModel):
 
     azmoon: Mapped["Azmoon"] = relationship(
         "Azmoon"
+    )
+
+
+class UserState(BaseModel):
+    student_id: Mapped[int] = mapped_column(ForeignKey('user.id', name='fk_real_user_state_id'))
+    exam_id: Mapped[int] = mapped_column(ForeignKey('azmoon.id', name='fk_real_exam_id'))
+    state: Mapped[str] = mapped_column(default="Normal")
+
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="user_state"
+    )
+
+    azmoon: Mapped["Azmoon"] = relationship(
+        "Azmoon",
+        back_populates="users_state"
     )
