@@ -14,7 +14,8 @@ __all__ = ["User",
 
 
 class Teacher(BaseModel):
-    username: Mapped[str] = mapped_column(unique=True,
+    username: Mapped[str] = mapped_column(String(50),
+                                          unique=True,
                                           nullable=False)
     password = mapped_column(String(256), nullable=False)
 
@@ -23,9 +24,9 @@ class User(BaseModel):
     __tablename__ = 'user'
 
     username = mapped_column(String(50), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     password = mapped_column(String(256), nullable=False)
-    name: Mapped[str] = mapped_column(unique=False, nullable=False)
+    name: Mapped[str] = mapped_column(String(70), unique=False, nullable=False)
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
     azmoon_id = mapped_column(
         Integer,
@@ -76,6 +77,11 @@ class Azmoon(BaseModel):
     users: Mapped[List["User"]] = relationship(
         "User",
         back_populates="azmoon"
+    )
+
+    results: Mapped[List["Result"]] = relationship(
+        "Result",
+        back_populates="azmoon",
     )
 
     users_state: Mapped[List["UserState"]] = relationship(
@@ -175,8 +181,8 @@ class Result(BaseModel):
         nullable=False
     )
 
-    for_azmoon_name: Mapped[str] = mapped_column(
-        ForeignKey('azmoon.name'),
+    for_azmoon_id: Mapped[str] = mapped_column(
+        ForeignKey('azmoon.id'),
         nullable=False
     )
 
@@ -188,14 +194,18 @@ class Result(BaseModel):
     )
 
     azmoon: Mapped["Azmoon"] = relationship(
-        "Azmoon"
+        "Azmoon",
+        back_populates="results"
     )
 
 
 class UserState(BaseModel):
-    student_id: Mapped[int] = mapped_column(ForeignKey('user.id', name='fk_real_user_state_id'))
-    exam_id: Mapped[int] = mapped_column(ForeignKey('azmoon.id', name='fk_real_exam_id'))
-    state: Mapped[str] = mapped_column(default="Normal")
+    __tablename__ = 'user_state'  # اضافه شد
+
+    user_id: Mapped[int] = mapped_column('student_id', ForeignKey('user.id', name='fk_real_user_state_id'))
+    azmoon_id: Mapped[int] = mapped_column('exam_id', ForeignKey('azmoon.id', name='fk_real_exam_id'))
+
+    state: Mapped[str] = mapped_column(String(100), default="Normal")
 
     user: Mapped["User"] = relationship(
         "User",

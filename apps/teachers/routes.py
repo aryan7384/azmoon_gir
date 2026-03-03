@@ -77,7 +77,7 @@ def dashboard():
             continue
 
         results.append({"stdname": user.name,
-                        "examname": i.for_azmoon_name,
+                        "examname": i.azmoon.name,
                         "percent": i.percent})
 
     states = []

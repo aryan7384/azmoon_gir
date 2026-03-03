@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}نتیجه آزمون {{result.for_azmoon_name}}{% endblock title %}
+{% block title %}نتیجه آزمون {{result.azmoon.name}}{% endblock title %}
 
 {% block content %}
-    <h1>نتیجه آزمون {{result.for_azmoon_name}} برای {{name}}</h1>
+    <h1>نتیجه آزمون {{result.azmoon.name}} برای {{name}}</h1>
     <pre>
 درصد: <span dir="ltr">{{result.percent}}</span>
 {{std_sample_text}}

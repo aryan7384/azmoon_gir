@@ -49,7 +49,7 @@ def calculate_result(user):
             score -= (33.33 / total_questions) 
 
     New_result = Result(for_student=user.id,
-                        for_azmoon_name=user_azmoon.name,
+                        for_azmoon_id=user_azmoon.id,
                         percent=score)
 
     db.session.add(New_result)
@@ -248,7 +248,7 @@ def start_exam():
         db.session.commit()
 
         calculate_result(user)
-        return render_template("users/azmoon/finished.html", azmoon_name=exam.name)
+        return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
 
     session['csrf_token'] = secrets.token_urlsafe(30)
 
@@ -269,15 +269,15 @@ def results():
         flash("لطفا دوباره وارد شوید.", "info")
         return redirect(url_for('users.login'))
 
-    results_for_user = map(lambda result: result.for_azmoon_name,
+    results_for_user = map(lambda result: result.azmoon.name,
                            Result.query.filter_by(for_student=user.id).all())
 
     return render_template("users/azmoon/results.html",
                            results=results_for_user)
 
 
-@blueprint.route('/results/<name>/')
-def result_for(name):
+@blueprint.route('/results/<id_>/')
+def result_for(id_):
     user = get_user(session.get("username"))
 
     if not user:
@@ -285,15 +285,14 @@ def result_for(name):
         return redirect(url_for('users.login'))
 
     result = Result.query.filter_by(for_student=user.id,
-                                    for_azmoon_name=name).first()
+                                    for_azmoon_id=id_).first()
     
     if not result:
         abort(404)
-
     
     # z_score
     scores = [s for s in map(lambda result: result.percent,
-                             Result.query.filter_by(for_azmoon_name=name).all())]
+                             Result.query.filter_by(for_azmoon_id=id_).all())]
     
     avg = sum(scores) / len(scores)
 
@@ -302,7 +301,7 @@ def result_for(name):
         std = 1
 
     z_score = (result.percent - avg) / std
-    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 5000)}\r\nتراز قلمچی: {round(z_score * 1000 + 5000)}"
+    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 10000)}\r\nتراز قلمچی: {round(z_score * 1000 + 5000)}"
     return render_template("users/azmoon/result_for.html",
                            result=result,
                            name=user.username,
