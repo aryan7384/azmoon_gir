@@ -121,7 +121,6 @@ def register_azmoon():
                         is_available=False)
         db.session.add(azmoon)
         db.session.commit()
-        print(users)
         if len(users) != 0:
             for user in users:
                 new_user = User.query.filter_by(username=user).first()
