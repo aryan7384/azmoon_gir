@@ -48,11 +48,11 @@ def calculate_result(user):
         else:
             score -= (33.33 / total_questions) 
 
-    New_result = Result(for_student=user.id,
+    new_result = Result(for_student=user.id,
                         for_azmoon_id=user_azmoon.id,
                         percent=score)
 
-    db.session.add(New_result)
+    db.session.add(new_result)
     db.session.commit()
     
 
