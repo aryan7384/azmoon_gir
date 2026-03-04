@@ -269,8 +269,7 @@ def results():
         flash("لطفا دوباره وارد شوید.", "info")
         return redirect(url_for('users.login'))
 
-    results_for_user = map(lambda result: result.azmoon.name,
-                           Result.query.filter_by(for_student=user.id).all())
+    results_for_user = Result.query.filter_by(for_student=user.id).all()
 
     return render_template("users/azmoon/results.html",
                            results=results_for_user)

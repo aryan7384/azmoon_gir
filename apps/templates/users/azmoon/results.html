@@ -6,7 +6,7 @@
     <h1>کارنامه های صادر شده</h1>
     <div>
     {% for res in results %}
-    <a href="{{ url_for('users.result_for', id_=res.azmoon.id) }}" class="normal-button" class="float-right">آزمون {{ res }}</a>
+    <a href="{{ url_for('users.result_for', id_=res.azmoon.id) }}" class="normal-button" class="float-right">آزمون {{ res.azmoon.name }}</a>
     {% endfor %}
     </div>
 {% endblock content %}
