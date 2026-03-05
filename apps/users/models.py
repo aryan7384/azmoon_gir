@@ -82,6 +82,7 @@ class Azmoon(BaseModel):
     results: Mapped[List["Result"]] = relationship(
         "Result",
         back_populates="azmoon",
+        cascade="all, delete"
     )
 
     users_state: Mapped[List["UserState"]] = relationship(
