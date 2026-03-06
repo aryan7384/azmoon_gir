@@ -12,6 +12,13 @@ class LoginForm(FlaskForm):
     submit = SubmitField('ورود')
 
 
+class UpdatePasswordForm(FlaskForm):
+    old_password = PasswordField('رمز عبور قبلی', validators=[DataRequired()])
+    new_password = PasswordField('رمز عبور جدید', validators=[DataRequired()])
+    confirm_password = PasswordField('تکرار رمز عبور', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField("تغییر رمز عبور")
+
+
 class RegisterUserForm(FlaskForm):
     username = StringField('نام کاربری', validators=[DataRequired(), Length(max=50)])
     name = StringField("نام و نام خانوادگی", validators=[DataRequired()])
