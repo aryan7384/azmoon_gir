@@ -101,6 +101,29 @@ def dashboard():
                            states=states)
 
 
+@blueprint.route("/teacher/update-password", methods=['GET', 'POST'])
+def update_password():
+    if result := check_teacher_logged_in():
+        return result
+
+    form = UpdatePasswordForm()
+    if form.validate_on_submit():
+        teacher = Teacher.query.filter_by(username=session["teacher_username"]).first()
+        if hashing.hash_value(form.old_password.data,
+                              salt=os.getenv("SALT")) != teacher.password:
+            flash("رمز عبور وارد شده درست نیست.", "danger")
+            return redirect(url_for('teachers.update_password'))
+
+        teacher.password = hashing.hash_value(form.new_password.data,
+                                              salt=os.getenv("SALT"))
+        db.session.commit()
+        flash("رمز عبور با موفقیت تغییر یافت.")
+        return redirect(url_for('teachers.dashboard'))
+
+    return render_template("teachers/update-password.html",
+                           form=form)
+
+
 @blueprint.route("/teacher/azmoon/register", methods=['GET', 'POST'])
 def register_azmoon():
     if result := check_teacher_logged_in():
@@ -128,6 +151,10 @@ def register_azmoon():
                     flash(f"دانش آموز {new_user.name}یک آزمون فعال دارد.")
                     return redirect(url_for('teachers.register_azmoon'))
                 new_user.azmoon_id = azmoon.id
+                state = UserState(user_id=new_user.id,
+                                  azmoon_id=azmoon.id,
+                                  state="معمولی")
+                db.session.add(state)
                 db.session.commit()
 
         flash("آزمون جدید ثبت شد.")
@@ -158,13 +185,14 @@ def delete_azmoon(id):
 
     users = User.query.filter_by(azmoon_id=azmoon.id).all()
     for i in users:
+        db.session.delete(UserState.query.filter_by(user_id=i.id,
+                                                    azmoon_id=i.azmoon_id).first())
         i.azmoon_id = 0
-
     db.session.commit()
 
     db.session.delete(azmoon)
     db.session.commit()
-    flash(f"آزمون {azmoon.name}با موفقیت حذف شد.")
+    flash(f"آزمون {azmoon.name}با موفقیت حذف شد. ")
     return redirect(url_for('teachers.dashboard'))
 
 
@@ -207,6 +235,7 @@ def modify_azmoon(id):
         for i in students:
             i.azmoon_id = 0
             i.answered = True
+            db.session.delete(UserState.query.filter_by(azmoon_id=exam.id).first())
         db.session.commit()
         users = form.users.data.strip().splitlines()
         for user in users:
@@ -215,9 +244,18 @@ def modify_azmoon(id):
                 flash(f"کاربر {user_record.username}برای شما ثبت نشده است.")
                 return redirect(url_for('teachers.modify_azmoon', id=id))
             user_record.azmoon_id = exam.id
+            state = UserState(user_id=user_record.id,
+                              azmoon_id=exam.id,
+                              state="normal")
+            db.session.add(state)
+            db.session.commit()
             if form.is_available.data:
+                user_record = User.query.filter_by(username=user).first()
                 user_record.answered = False
-            db.session.add(user_record)
+                state = UserState.query.filter_by(user_id=user_record.id,
+                                                  azmoon_id=user_record.azmoon_id).first()
+                state.state = "آماده برای شروع <a href='#'>ارسال ایمیل برای اطلاع رسانی</a>"
+
             db.session.commit()
 
         flash("ازمون با موفقیت به روزرسانی شد.")
