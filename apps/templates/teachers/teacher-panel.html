@@ -28,6 +28,9 @@
 </head>
 <body>
 <h1>شما در صفحه ی معلم هستید.</h1>
+<div>
+    <a href="{{ url_for('teachers.update_password') }}">بروز رسانی رمز عبور</a>
+</div>
 {% include 'flash-messages.html' %}
 <div>
     <h2>کاربران</h2>
