@@ -57,6 +57,7 @@ class User(BaseModel):
     user_state: Mapped[List["UserState"]] = relationship(
         "UserState",
         back_populates="user",
+        cascade="all, delete-orphan"
     )
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id}, {self.username})"
@@ -82,12 +83,13 @@ class Azmoon(BaseModel):
     results: Mapped[List["Result"]] = relationship(
         "Result",
         back_populates="azmoon",
-        cascade="all, delete"
+        cascade="all, delete-orphan"
     )
 
     users_state: Mapped[List["UserState"]] = relationship(
         "UserState",
         back_populates="azmoon",
+        cascade="all, delete-orphan"
     )
 
 class RealQuestion(BaseModel):
@@ -136,7 +138,8 @@ class RealOption(BaseModel):
 
     answers: Mapped[List["Answer"]] = relationship(
         "Answer",
-        back_populates="option"
+        back_populates="option",
+        cascade="all, delete-orphan"
     )
 
 
