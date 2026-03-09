@@ -185,8 +185,6 @@ def delete_azmoon(id):
 
     users = User.query.filter_by(azmoon_id=azmoon.id).all()
     for i in users:
-        db.session.delete(UserState.query.filter_by(user_id=i.id,
-                                                    azmoon_id=i.azmoon_id).first())
         i.azmoon_id = 0
     db.session.commit()
 
