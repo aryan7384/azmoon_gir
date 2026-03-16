@@ -246,7 +246,10 @@ def start_exam():
             db.session.commit()
         user.answered = True
         db.session.commit()
-
+        user_state = UserState.query.filter_by(user_id=user.id).first()
+        user_state.state = "پایان ازمون"
+        db.session.commit()
+        # check for User fields & new features
         calculate_result(user)
         return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
 
