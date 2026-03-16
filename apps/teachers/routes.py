@@ -186,6 +186,7 @@ def delete_azmoon(id):
     users = User.query.filter_by(azmoon_id=azmoon.id).all()
     for i in users:
         i.azmoon_id = 0
+        i.answered = True
     db.session.commit()
 
     db.session.delete(azmoon)
