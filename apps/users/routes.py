@@ -253,6 +253,9 @@ def start_exam():
         calculate_result(user)
         return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
 
+    user_state = UserState.query.filter_by(user_id=user.id).first()
+    user_state.state = "در حال آرمون دادن"
+    db.session.commit()
     session['csrf_token'] = secrets.token_urlsafe(30)
 
     return render_template("users/azmoon/start_exam.html",
