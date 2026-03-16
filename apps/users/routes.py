@@ -203,8 +203,8 @@ def azmoon():
         flash("لطفا دوباره وارد شوید.", "info")
         return redirect(url_for('users.login'))
 
-    has_exam = Azmoon.query.filter(Azmoon.id == get_user(username).azmoon_id,
-                                   Azmoon.is_available == True).first() and not get_user(username).answered
+    has_exam = bool(Azmoon.query.where(Azmoon.id == get_user(username).azmoon_id,
+                                       Azmoon.is_available == True).first()) and (not get_user(username).answered)
     return render_template("users/azmoon/entry_page.html",
                            username=username, has_exam=has_exam,
                            Azmoon=Azmoon,
