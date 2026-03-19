@@ -1,5 +1,5 @@
 import secrets
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request, render_template_string
 from .forms import *
 from ..database import db
 from apps.users.models import *
@@ -242,7 +242,6 @@ def modify_azmoon(id):
             if user_record.teacher_id != teacher.id:
                 flash(f"کاربر {user_record.username}برای شما ثبت نشده است.")
                 return redirect(url_for('teachers.modify_azmoon', id=id))
-            user_record.azmoon_id = exam.id
             state = UserState(user_id=user_record.id,
                               azmoon_id=exam.id,
                               state="normal")
@@ -251,9 +250,12 @@ def modify_azmoon(id):
             if form.is_available.data:
                 user_record = User.query.filter_by(username=user).first()
                 user_record.answered = False
+                user_record.azmoon_id = exam.id
                 state = UserState.query.filter_by(user_id=user_record.id,
                                                   azmoon_id=user_record.azmoon_id).first()
-                state.state = "آماده برای شروع <a href='#'>ارسال ایمیل برای اطلاع رسانی</a>"
+                state_text = """اماده برای شروع <a href='{{url_for('teachers.send_mail', user_id=user_id')}}"""
+                state.state = render_template_string(state_text,
+                                                     user_id=user_record.id)
 
             db.session.commit()
 
@@ -592,3 +594,8 @@ def delete_option(exam_id, q_id, option_id):
     db.session.commit()
     flash("گزینه با موفقیت حذف شد.", category="success")
     return redirect(url_for('teachers.questions', id=exam_id))
+
+
+@blueprint.route("/teacher/send_mail/<user_id>")
+def send_mail(user_id):
+    ...
