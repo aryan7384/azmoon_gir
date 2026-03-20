@@ -32,6 +32,7 @@ def login():
             return redirect(url_for('admin.admin_homepage'))
         
         flash("رمز اشتباه")
+        return redirect(url_for("admin.login"))
 
     return render_template("admin/login.html", form=form)
 
