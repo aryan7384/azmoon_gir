@@ -6,6 +6,7 @@ from apps.users.models import *
 from ..extensions import *
 import os
 import dotenv
+from flask_mailman import EmailMessage
 
 dotenv.load_dotenv()
 
@@ -253,7 +254,11 @@ def modify_azmoon(id):
                 user_record.azmoon_id = exam.id
                 state = UserState.query.filter_by(user_id=user_record.id,
                                                   azmoon_id=user_record.azmoon_id).first()
-                state_text = """اماده برای شروع <a href='{{url_for('teachers.send_mail', user_id=user_id')}}"""
+                state_text = """
+                هنوز ازمون نداده است.
+                <form method='POST' action={{url_for('teachers.send_mail', user_id=user_id)}}>
+                <input type='submit' value='ارسال ایمیل'>
+                </form>"""
                 state.state = render_template_string(state_text,
                                                      user_id=user_record.id)
 
@@ -596,6 +601,22 @@ def delete_option(exam_id, q_id, option_id):
     return redirect(url_for('teachers.questions', id=exam_id))
 
 
-@blueprint.route("/teacher/send_mail/<user_id>")
+@blueprint.route("/teacher/send_mail/<user_id>", methods=["POST"])
 def send_mail(user_id):
-    ...
+    user = User.query.filter_by(id=user_id).first()
+    email = user.email
+    body = f"""
+<div dir="rtl">
+<h1>پیام از طرف معلم</h1>
+<p>معلم به شما درخواست شرکت در ازمون داده است.<p>
+<a href={url_for('users.azmoon')}>ورود به آزمون</a>
+</div>"""
+    msg = EmailMessage(
+        subject='پیام از طرف معلم، ذهن زان',
+        body=body,
+        to=[email]
+    )
+    msg.content_subtype = "html"
+    msg.send()
+    flash("پیغام ارسال شد.", category="success")
+    return redirect(url_for("teachers.dashboard"))
