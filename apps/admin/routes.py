@@ -19,7 +19,12 @@ def admin_homepage():
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
     
-    return render_template("admin/admin.html")
+    if session["admin_logged_in"]:
+        return render_template("admin/admin.html")
+    
+    else:
+        flash("اول رمز عبور را وارد کنید.")
+        return redirect(url_for('admin.login'))
 
 
 @blueprint.route("/admin/login/", methods=["GET", "POST"])
