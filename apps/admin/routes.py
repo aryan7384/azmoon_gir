@@ -118,4 +118,4 @@ def remove_teacher(teacher_id):
     db.session.commit()
 
     flash("معلم حذف شد.")
-    return redirect(url_for("admin.admin_homepage"))
+    return redirect(url_for("admin.manage_teachers"))
