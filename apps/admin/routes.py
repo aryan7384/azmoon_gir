@@ -31,14 +31,15 @@ def login():
             session['admin_logged_in'] = True
             return redirect(url_for('admin.admin_homepage'))
         
-        flash("رمز اشتباه")
-        return redirect(url_for("admin.login"))
+        else:
+            flash("رمز اشتباه")
+            return render_template("admin/login.html", form=form)
 
     return render_template("admin/login.html", form=form)
 
 
 @blueprint.route("/admin/manage-teachers")
-def manageTeachers():
+def manage_teachers():
     if session.get("admin_logged_in") != True:
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
@@ -66,7 +67,7 @@ def manageTeachers():
 
 
 @blueprint.route("/admin/register-teacher", methods=["GET", "POST"])
-def registerTeacher():
+def register_teacher():
     if session.get("admin_logged_in") != True:
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
@@ -83,14 +84,14 @@ def registerTeacher():
         db.session.commit()
 
         flash("معلم جدید ثبت شد!")
-        return redirect(url_for("admin.manageTeachers"))
+        return redirect(url_for("admin.manage_teachers"))
 
     return render_template("admin/register-teacher.html",
                            form=form)
 
 
 @blueprint.route("/admin/remove-teacher/<teacher_id>", methods=["POST"])
-def removeTeacher(teacher_id):
+def remove_teacher(teacher_id):
     if not (session.get("admin_logged_in") == True):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))

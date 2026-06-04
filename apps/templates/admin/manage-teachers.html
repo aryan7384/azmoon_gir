@@ -8,7 +8,7 @@
         <h1>ثبت، حذف یا تفییر معلمان</h1>
         {% include 'flash-messages.html' %}
         <div>
-            <a href="{{ url_for("admin.registerTeacher") }}">ثبت معلم جدید</a>
+            <a href="{{ url_for('admin.register_teacher') }}">ثبت معلم جدید</a>
             <section>
                 <h2>لیست معلمان</h2>
                 <hr>
@@ -23,7 +23,7 @@
                             دانش اموزی برای این معلم ثبت نشده است.
                             {% endif %}
                             <br>
-                            <form method="post" action="{{ url_for('admin.removeTeacher',
+                            <form method="post" action="{{ url_for('admin.remove_teacher',
                                     teacher_id=teacher.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                 <input type="submit" value="حذف معلم">
