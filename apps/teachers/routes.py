@@ -609,7 +609,7 @@ def send_mail(user_id):
 <div dir="rtl">
 <h1>پیام از طرف معلم</h1>
 <p>معلم به شما درخواست شرکت در ازمون داده است.<p>
-<a href={url_for('users.azmoon')}>ورود به آزمون</a>
+<a href="{os.getenv("DOMAIN")}{url_for('users.azmoon')}">ورود به آزمون</a>
 </div>"""
     msg = EmailMessage(
         subject='پیام از طرف معلم، ذهن زان',
