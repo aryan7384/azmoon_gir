@@ -16,11 +16,12 @@
     <div>
     {% for answer in zip(A.query.filter_by(question_id = question[0].id).all()|shuffle,
          range(1, len_(A.query.filter_by(question_id = question[0].id).all()) + 1)) %}
-
-        <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}">{{ answer[1] }}: {{ answer[0].text }}
+        <label for="{{question[0].id}}">{{ answer[1] }}: {{ answer[0].text }}</label>
+        <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}" id="{{question[0].id}}">
         <br>
     {% endfor %}
-    <input type="radio" name="{{ question[0].id }}" value="no_answer" checked>پاسخ نمیدهم
+    <label for="{{question[0].id}}">پاسخ نمیدهم</label>
+    <input type="radio" name="{{ question[0].id }}" value="no_answer" checked id="{{question[0].id}}">
     <br>
 
     </div>
