@@ -4,8 +4,11 @@
 
 {% block content %}
     <h1>نتیجه آزمون {{result.azmoon.name}} برای {{name}}</h1>
-    <pre>
+    <div style="font-size: large">
+        <pre>
 درصد: <span dir="ltr">{{result.percent}}</span>
 {{std_sample_text}}
-    </pre>
+        </pre>
+        <pre>رتبه: {{ rank }}</pre>
+    </div>
 {% endblock content %}

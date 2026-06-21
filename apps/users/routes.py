@@ -306,9 +306,19 @@ def result_for(id_):
     if std == 0:
         std = 1
 
+    # rank
+    results_for_rank = []
+    for result in Result.query.filter_by(for_azmoon_id=id_).all():
+        results_for_rank.append((result.id, result.percent))
+    
+    results_for_rank = sorted(results_for_rank, key=lambda item: -item[1])
+    rank = results_for_rank.index((result.id, result.percent)) + 1
+
+
     z_score = (result.percent - avg) / std
     std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 10000)}\r\nتراز قلمچی: {round(z_score * 1000 + 5000)}"
     return render_template("users/azmoon/result_for.html",
                            result=result,
                            name=user.username,
-                           std_sample_text=std_sample_text)
+                           std_sample_text=std_sample_text,
+                           rank=rank)
