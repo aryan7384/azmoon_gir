@@ -1,8 +1,7 @@
 {% with msgs = get_flashed_messages(with_categories=true) %}
     {% if msgs %}
         {% for cat, msg in msgs %}
-        
-            <p class="alert-{{ cat }}">{{ msg }}</p>
+            <p class="alert-{{ cat }}" style="border: 2px solid black; border-radius: 5px; display: inline-block;">{{ msg }}</p>
         {% endfor %}
     {% endif %}
 
