@@ -18,6 +18,7 @@ class Teacher(BaseModel):
                                           unique=True,
                                           nullable=False)
     password = mapped_column(String(256), nullable=False)
+    student_limit = mapped_column(Integer, nullable=False, default=-1)
 
 
 class User(BaseModel):
@@ -69,6 +70,7 @@ class Azmoon(BaseModel):
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=False)
+    exam_type: Mapped[int] = mapped_column(nullable=True, default=0)
     questions: Mapped[List["RealQuestion"]] = relationship(
         "RealQuestion",
         back_populates="azmoon",
@@ -97,6 +99,8 @@ class RealQuestion(BaseModel):
 
     title = mapped_column(String(400))
 
+    question_type: Mapped[int] = mapped_column(nullable=True, default=0)
+    answer: Mapped[str] = mapped_column(String(400), nullable=True)
     azmoon_id: Mapped[int] = mapped_column(
         ForeignKey('azmoon.id', name='fk_real_question_azmoon_id'),
         nullable=False
@@ -125,6 +129,7 @@ class RealOption(BaseModel):
 
     text = mapped_column(String(100), nullable=False)
     is_correct: Mapped[bool] = mapped_column(default=False, nullable=False)
+
 
     question_id: Mapped[int] = mapped_column(
         ForeignKey('real_question.id', name="fk_real_option_question_id"),
