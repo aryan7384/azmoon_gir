@@ -17,4 +17,17 @@
             <td>{{ rank }}</td>
         </tr>
     </table>
+    <h2>پاسخ شما به هر سوال</h2>
+    <table>
+        <tr>
+            <th>متن سوال</th>
+            <th>جواب شما</th>
+        </tr>
+        {% for a in results_for_user %}
+        <tr>
+            <td>{{ a["question"] }}</td>
+            <td style="background-color: {{ '#00ff00' if a['is_true'] == 't' else '#ff0000' }}; color: {{ 'black' if a['is_true'] == 't' else 'white' }}">{{ a["answer"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock content %}
