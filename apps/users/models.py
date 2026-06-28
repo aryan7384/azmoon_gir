@@ -100,8 +100,6 @@ class RealQuestion(BaseModel):
 
     title = mapped_column(String(400))
 
-    question_type: Mapped[int] = mapped_column(nullable=True, default=0)
-    answer: Mapped[str] = mapped_column(String(400), nullable=True)
     azmoon_id: Mapped[int] = mapped_column(
         ForeignKey('azmoon.id', name='fk_real_question_azmoon_id'),
         nullable=False
