@@ -10,7 +10,6 @@ import secrets
 import dotenv
 import random
 from flask_mailman import EmailMessage
-import time
 
 dotenv.load_dotenv()
 
@@ -319,17 +318,19 @@ def result_for(id_):
         flash("لطفا دوباره وارد شوید.", "info")
         return redirect(url_for('users.login'))
 
-    print(user.id)
-    result = Result.query.filter_by(for_student=user.id,
-                                    for_azmoon_id=id_).first()
-    
-    if not result:
+    all_results = Result.query.filter_by(for_azmoon_id=id_).all()
+
+    user_result = Result.query.filter_by(
+        for_student=user.id,
+        for_azmoon_id=id_
+    ).first()
+
+    if not user_result:
         abort(404)
-    
-    # z_score
-    scores = [s for s in map(lambda result: result.percent,
-                             Result.query.filter_by(for_azmoon_id=id_).all())]
-    
+
+    # z-score
+    scores = [r.percent for r in all_results]
+
     avg = sum(scores) / len(scores)
 
     std = calc_result.calc_S(scores)
@@ -337,19 +338,78 @@ def result_for(id_):
         std = 1
 
     # rank
-    results_for_rank = []
-    for result in Result.query.filter_by(for_azmoon_id=id_).all():
-        results_for_rank.append((result.id, result.percent))
-    
-    results_for_rank = sorted(results_for_rank, key=lambda item: -item[1])
-    rank = results_for_rank.index((result.id, result.percent)) + 1
+    results_for_rank = [
+        (r.id, r.percent)
+        for r in all_results
+    ]
 
+    results_for_rank.sort(key=lambda item: -item[1])
 
-    z_score = (result.percent - avg) / std
-    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 10000)} | تراز قلمچی: {round(z_score * 1000 + 5000)}"
-    return render_template("users/azmoon/result_for.html",
-                           result=result,
-                           name=user.username,
-                           std_sample_text=std_sample_text,
-                           rank=rank,
-                           round=round)
+    rank = results_for_rank.index(
+        (user_result.id, user_result.percent)
+    ) + 1
+
+    z_score = (user_result.percent - avg) / std
+
+    std_sample_text = (
+        f"تراز سنجش: {round(z_score * 2000 + 10000)} | "
+        f"تراز قلمچی: {round(z_score * 1000 + 5000)}"
+    )
+
+    results_for_user = []
+
+    exam = Azmoon.query.filter_by(id=id_).first()
+
+    if exam.exam_type == 0:
+        for q in RealQuestion.query.filter_by(azmoon_id=id_).all():
+            answer = Answer.query.filter_by(
+                for_question=q.id,
+                for_student=user.id
+            ).first()
+
+            if not answer:
+                continue
+
+            option = RealOption.query.filter_by(
+                id=answer.answer
+            ).first()
+
+            correct_option = RealOption.query.filter_by(
+                question_id=q.id,
+                is_correct=True
+            ).first()
+
+            results_for_user.append({
+                "question": q.title,
+                "answer": option.text,
+                "is_true": "t" if option.id == correct_option.id else "f"
+            })
+
+    else:
+        for q in DescQuestion.query.filter_by(
+            azmoon_id=id_
+        ).all():
+
+            answer = DescAnswer.query.filter_by(
+                student_id=user.id,
+                desc_question_id=q.id
+            ).first()
+
+            if not answer:
+                continue
+
+            results_for_user.append({
+                "question": q.text,
+                "answer": answer.answer,
+                "is_true": answer.is_true
+            })
+
+    return render_template(
+        "users/azmoon/result_for.html",
+        result=user_result,
+        name=user.username,
+        std_sample_text=std_sample_text,
+        rank=rank,
+        round=round,
+        results_for_user=results_for_user
+    )
