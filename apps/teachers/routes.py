@@ -790,8 +790,7 @@ def send_mail(user_id):
     except gaierror:
         flash("ارسال با خطا مواجه شد. اندکی بعد مجدد تلاش کنید.")
 
-    finally:
-        return redirect(url_for("teachers.dashboard"))
+    return redirect(url_for("teachers.dashboard"))
     
 
 @blueprint.route("/uploads/<path:filename>")
