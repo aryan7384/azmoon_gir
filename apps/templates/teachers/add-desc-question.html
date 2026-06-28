@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>افزودن سوال تشریحی</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
+</head>
+<body>
+    <h1>افزودن سوال تشریحی</h1>
+    {% include 'flash-messages.html' %}
+    {% include 'form-errors.html' %}
+    <a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
+    <div>
+        <form action="{{url_for('teachers.add_desc', exam_id=exam_id)}}" method="POST" enctype="multipart/form-data">
+            {{form.csrf_token}}
+            {{form.text.label}}: {{form.text}}
+            <br>
+            {{form.desc_answer.label}}: {{form.desc_answer}}
+            <br>
+            {{form.photo.label}}
+            <br>
+            {{form.photo(id="image")}}
+            <br>
+            <i>فقط فرمت های jpg, webp, png پذیرفته است.</i>
+            <br>
+            <img id="preview" alt="Image preview">
+            <input type="submit" value="ثبت سوال" class="blue-button">
+        </form>
+    </div>
+    <script>
+        const input = document.getElementById("image");
+        const preview = document.getElementById("preview");
+
+        input.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+            };
+
+            reader.readAsDataURL(file);
+          }
+        });
+        </script>
+</body>
+</html>

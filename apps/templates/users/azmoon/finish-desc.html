@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}آزمون{% endblock title %}
+
+{% block content %}
+<p>پایان ازمون
+    <br>
+    نتایج به شما اعلام خواهند شد.
+
+</p>
+<a href="{{url_for('users.dashboard')}}">بازگشت به حساب کاربری</a>
+{% endblock content %}

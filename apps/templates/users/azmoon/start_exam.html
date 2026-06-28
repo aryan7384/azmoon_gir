@@ -8,6 +8,7 @@
 
     <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     
+    {% if azmoon.exam_type == 0 %}
     <div>
     {% for question in zip(Q.query.filter_by(azmoon_id = azmoon.id).all()|shuffle,
         range(1, len_(Q.query.filter_by(azmoon_id = azmoon.id).all()) + 1)) %}
@@ -16,9 +17,11 @@
     <div>
     {% for answer in zip(A.query.filter_by(question_id = question[0].id).all()|shuffle,
          range(1, len_(A.query.filter_by(question_id = question[0].id).all()) + 1)) %}
-        <label for="{{question[0].id}}">{{ answer[1] }}: {{ answer[0].text }}</label>
-        <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}" id="{{question[0].id}}">
-        <br>
+        <div>
+            <label for="{{question[0].id}}__{{answer[0].id}}">{{ answer[1] }}: {{ answer[0].text }}</label>
+            <input type="radio" name="{{ question[0].id }}" value="{{ answer[0].id }}" id="{{question[0].id}}__{{answer[0].id}}">
+        </div>
+
     {% endfor %}
     <label for="{{question[0].id}}">پاسخ نمیدهم</label>
     <input type="radio" name="{{ question[0].id }}" value="no_answer" checked id="{{question[0].id}}">
@@ -28,6 +31,22 @@
     </div>
     <hr>
     {% endfor %}
+    {% else %}
+    <div>
+        {% for q in Q.query.filter_by(azmoon_id = azmoon.id).all()|shuffle %}
+        <div>
+            <p>{{q.text}}</p>
+            <br>
+            {% if q.photo_name %}
+                <img src="{{ url_for('teachers.uploaded_file', filename=q.photo_name) }}" alt="Question image"
+                style="max-width: 100%;">
+                <br>
+            {% endif %}
+            <textarea name="{{q.id}}" id="{{q.id}}"></textarea>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <input type="submit" value='پایان ازمون'>
 </form>
 {% endblock content %}

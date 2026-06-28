@@ -5,16 +5,38 @@
     <title>ثبت آزمون</title>
     <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+let jsonString = {{ students_json | tojson }};
+
+function toggleAllStudents(checkbox) {
+    let field = document.getElementById("usersField");
+
+    if (checkbox.checked) {
+        let arr = JSON.parse(jsonString);
+        field.value = arr.join("\n");
+    } else {
+        field.value = "";
+    }
+}
+</script>
 </head>
 <body>
 {% include 'form-errors.html' %}
 {% include 'flash-messages.html' %}
+<a href="{{ url_for('teachers.dashboard') }}" class="green-button">بازگشت</a>
 <form method="POST" action="">
     {{ form.csrf_token }}
     {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
     <br>
-    {{ form.users.label }} (نام کاربری ها را با اینتر جدا کنید): {{ form.users }}
+    {{ form.users.label }} (نام کاربری ها را با اینتر جدا کنید): {{ form.users(id="usersField") }}
     <br>
+    <label for="allStudents">همه دانش اموزان در ازمون باشند</label>
+    <input type="checkbox" id="allStudents" onclick="toggleAllStudents(this)">
+    <br>
+    {{ form.exam_type.label }}: {{ form.exam_type }}
+    <pre style="border: 2px solid black; font-style: oblique;">
+        توجه داشته باشید امکان تغییر نوع ازمون پس از ثبت ان وجود ندارد.
+    </pre>
     <input type="submit" value="ثبت آزمون">
 </form>
 </body>

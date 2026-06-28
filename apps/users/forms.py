@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Email, ValidationError
 from apps.database import db
 from .models import User
 
@@ -14,7 +14,7 @@ __all__ = ['LoginForm',
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember')
+    remember_me = BooleanField('بار بعدی من را به یاد بیاور')
 
 
 class UpdateProfileForm(FlaskForm):

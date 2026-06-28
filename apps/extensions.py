@@ -1,14 +1,17 @@
 from flask_hashing import Hashing
 from flask_mailman import Mail
-__all__ = ["hashing", "calc_S", "mail"]
+from celery import Celery
+import dotenv
+import os
+__all__ = ["hashing", "mail"]
 
 
-def calc_S(scores):
-    S = 0
-    for i in scores:
-        S += (i - sum(scores) / len(scores)) ** 2
-    return (S / len(scores)) ** 0.5
-
-
+dotenv.load_dotenv()
 hashing = Hashing()
 mail = Mail()
+
+celery = Celery(__name__)
+celery.conf.update(
+    broker_url=os.getenv("CELERY_BROKER_URL"),
+    result_backend=os.getenv("CELERY_RESULT_BACKEND")
+)

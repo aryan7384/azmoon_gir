@@ -20,7 +20,9 @@ def admin_homepage():
         return redirect(url_for('admin.login'))
     
     if session["admin_logged_in"]:
-        return render_template("admin/admin.html")
+        session['csrf_token'] = secrets.token_urlsafe(32)
+        return render_template("admin/admin.html",
+                               csrf_token=session["csrf_token"])
     
     else:
         flash("اول رمز عبور را وارد کنید.")
@@ -59,7 +61,8 @@ def manage_teachers():
         students = set(map(lambda s: s.name, students))
         teacher_dict = {"username": teacher.username,
                         "students": students,
-                        "id": teacher.id}
+                        "id": teacher.id,
+                        "limit": teacher.student_limit}
         teachers.append(teacher_dict)
 
 
@@ -83,7 +86,8 @@ def register_teacher():
                               password=hashing.hash_value(
                                   form.password.data,
                                   salt=os.getenv("SALT")
-                              ))
+                              ),
+                              student_limit=form.limit.data)
         
         db.session.add(new_teacher)
         db.session.commit()
@@ -108,6 +112,7 @@ def remove_teacher(teacher_id):
     teacher = Teacher.query.filter_by(id=teacher_id).first()
     users = User.query.filter_by(teacher_id=teacher.id).all()
     for user in users:
+        DescAnswer.query.filter_by(student_id=user.id).delete()
         db.session.delete(user)
 
     exams = Azmoon.query.filter_by(teacher_id=teacher.id).all()
@@ -119,3 +124,40 @@ def remove_teacher(teacher_id):
 
     flash("معلم حذف شد.")
     return redirect(url_for("admin.manage_teachers"))
+
+
+@blueprint.route("/admin/modify_teacher/<teacher_id>", methods=["POST"])
+def modify_teacher(teacher_id):
+    if not (session.get("admin_logged_in") == True):
+        flash("اول رمز عبور را وارد کنید.")
+        return redirect(url_for('admin.login'))
+
+    if session.get("csrf_token") != request.form["csrf_token"]:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('admin.admin_homepage'))
+
+    teacher = Teacher.query.filter_by(id=teacher_id).first()
+    try:
+        teacher.student_limit = int(request.form["limit"])
+        db.session.commit()
+
+    except:
+        flash("مقدار وارد شده نامعتبر است.")
+        return redirect(url_for("admin.manage_teachers"))
+        
+    flash("سقف مجاز دانش اموز ها تغییر یافت.")
+    return redirect(url_for("admin.manage_teachers"))
+
+@blueprint.route("/admin/logout", methods=["POST"])
+def logout():
+    if not (session.get("admin_logged_in") == True):
+        flash("اول رمز عبور را وارد کنید.")
+        return redirect(url_for('admin.login'))
+
+    if session.get("csrf_token") != request.form["csrf_token"]:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('admin.admin_homepage'))
+    
+    del session["admin_logged_in"]
+    flash("یا موفقیت خارج شدید")
+    return redirect(url_for("home.home"))

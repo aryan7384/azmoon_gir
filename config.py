@@ -15,6 +15,7 @@ class Config:
     MAIL_PORT = os.getenv("MAIL_PORT")
     MAIL_USE_TLS = True if os.getenv("MAIL_USE_TLS") == "True" else False
     MAIL_USE_SSL = True if os.getenv("MAIL_USE_SSL") == "True" else False
+    UPLOAD_DIR = os.path.join(BASE_DIR, "upload")
 
 
 class ProductionConfig(Config):

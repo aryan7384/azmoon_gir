@@ -8,6 +8,7 @@
     <body>
         <h1>ثبت، حذف یا تفییر معلمان</h1>
         {% include 'flash-messages.html' %}
+        <a href="{{url_for('admin.admin_homepage')}}" class="blue-button">بازگشت</a>
         <div>
             <a href="{{ url_for('admin.register_teacher') }}">ثبت معلم جدید</a>
             <section>
@@ -28,6 +29,13 @@
                                     teacher_id=teacher.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                 <input type="submit" value="حذف معلم">
+                            </form>
+                            <form method="post" action="{{ url_for('admin.modify_teacher',
+                                    teacher_id=teacher.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <label for="limit">محدودیت دانش اموزان (برای برداشتن محدودیت عدد <span style="direction: ltr;">-1</span> را وارد کنید): </label>
+                                <input type="number" name="limit" value="{{ teacher['limit'] }}" id="limit" style="direction: ltr; max-width: 300px;" min="-1">
+                                <input type="submit" value="تغییر محدودیت">
                             </form>
                         </div>
                     {% endfor %}

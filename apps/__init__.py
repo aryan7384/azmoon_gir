@@ -12,7 +12,7 @@ from flask_migrate import Migrate
 import random
 import os
 import dotenv
-from .extensions import mail
+from .extensions import mail, celery
 
 
 def register_blueprints(application: Flask):
@@ -50,32 +50,43 @@ def register_shell_context(application: Flask):
         context
     )
 
-
 dotenv.load_dotenv()
 
-app = Flask(__name__)
-app.config.from_object(os.getenv("DEV_DEP"))
 
-app.permanent_session_lifetime = timedelta(days=float(os.getenv("SESSION_LIFETIME_DAYS")),
-                                           hours=float(os.getenv("SESSION_LIFETIME_HOURS")),
-                                           minutes=float(os.getenv("SESSION_LIFETIME_MINUTES")))
+def create_app():
+    
+    app = Flask(__name__)
+    app.config.from_object(os.getenv("DEV_DEP"))
+    app.permanent_session_lifetime = timedelta(days=float(os.getenv("SESSION_LIFETIME_DAYS")),
+                                            hours=float(os.getenv("SESSION_LIFETIME_HOURS")),
+                                            minutes=float(os.getenv("SESSION_LIFETIME_MINUTES")))
 
-mail.init_app(app)
+    mail.init_app(app)
 
-register_blueprints(app)
-register_error_handlers(app)
-register_shell_context(app)
+    register_blueprints(app)
+    register_error_handlers(app)
+    register_shell_context(app)
 
-db.init_app(app)
+    db.init_app(app)
 
-migrate = Migrate(app, db)
+    migrate = Migrate(app, db)
 
-hashing.init_app(app)
+    hashing.init_app(app)
 
 
 
-@app.template_filter('shuffle')
-def shuffle_filter(iterable):
-    items = iterable
-    random.shuffle(items)
-    return items
+    @app.template_filter('shuffle')
+    def shuffle_filter(iterable):
+        items = iterable
+        random.shuffle(items)
+        return items
+
+    celery.conf.update(
+        broker_url=os.getenv("CELERY_BROKER_URL"),
+        result_backend=os.getenv("CELERY_RESULT_BACKEND"),
+    )
+    with celery.connection_for_write() as conn:
+        conn.ensure_connection(max_retries=1)
+
+    return app
+

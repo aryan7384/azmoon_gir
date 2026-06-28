@@ -3,12 +3,18 @@
 {% block title %}نتیجه آزمون {{result.azmoon.name}}{% endblock title %}
 
 {% block content %}
-    <h1>نتیجه آزمون {{result.azmoon.name}} برای {{name}}</h1>
-    <div style="font-size: large">
-        <pre>
-درصد: <span dir="ltr">{{result.percent}}</span>
+    <table>
+        <tr>
+            <th>درصد</th>
+            <th>تراز</th>
+            <th>رتبه</th>
+        </tr>
+        <tr>
+            <td>{{round(result.percent, 2)}}</td>
+            <td style="font-size: xxlarge;">
 {{std_sample_text}}
-        </pre>
-        <pre>رتبه: {{ rank }}</pre>
-    </div>
+            </td>
+            <td>{{ rank }}</td>
+        </tr>
+    </table>
 {% endblock content %}

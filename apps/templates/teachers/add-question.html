@@ -9,6 +9,7 @@
 <body>
 <h1>افزودن سؤال</h1>
 {% include 'flash-messages.html' %}
+<a href="{{url_for('teachers.questions', id=exam.id)}}" class="green-button">بازگشت</a>
 <form method="POST" action="">
     {{ form.csrf_token }}
     {{ form.title.label }}: {{ form.title }}

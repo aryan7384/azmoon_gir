@@ -8,6 +8,7 @@
 </head>
 <body>
 {% include 'form-errors.html' %}
+<a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
 <form action="" method="post">
     {{ form.csrf_token }}
     {{ form.username.label }}: {{ form.username }}
@@ -18,7 +19,7 @@
     <br>
     <div>
         <pre dir="rtl">رمز عبور کاربر جدید به این صورت تنظیم میشود:
-        <span dir="ltr"># + username + 123</span></pre>
+        <span dir="ltr">#(نام کاربری)123</span></pre>
     </div>
     {{ form.submit() }}
 </form>

@@ -1,5 +1,5 @@
 import secrets
-from flask import Blueprint, render_template, redirect, url_for, session, flash, request, render_template_string
+from flask import Blueprint, render_template, redirect, url_for, session, flash, request, render_template_string, current_app, send_from_directory
 from .forms import *
 from ..database import db
 from apps.users.models import *
@@ -7,6 +7,10 @@ from ..extensions import *
 import os
 import dotenv
 from flask_mailman import EmailMessage
+from json import dumps
+from socket import gaierror
+from uuid import uuid4
+from pathlib import Path
 
 dotenv.load_dotenv()
 
@@ -69,6 +73,29 @@ def dashboard():
                           "t" if RealOption.query.filter_by(id=i.answer).first().is_correct else "f"}
         answers.append(new_answer)
 
+    desc_answers_list = DescAnswer.query.all()
+    for d in desc_answers_list:
+        user_id = d.student_id
+
+        if not User.query.filter_by(id=user_id).first():
+            db.session.delete(d)
+            continue
+
+        if User.query.filter_by(id=user_id).first().teacher_id != teacher.id:
+            continue
+
+
+        question = DescQuestion.query.filter_by(id=d.desc_question_id).first()
+        exam_name = Azmoon.query.filter_by(id=question.azmoon_id).first().name
+        new_answer = {
+            "stdname": User.query.filter_by(id=user_id).first().name,
+            "question": question.text,
+            "exam_name": exam_name,
+            "answer": d.answer,
+            "is_correct":
+            "t" if d.is_true else ("f" if d.is_true == 0 else "b")
+        }
+        answers.append(new_answer)
     all_results = Result.query.all()
     results = []
 
@@ -83,13 +110,15 @@ def dashboard():
 
     states = []
     for i in exams:
-        exam_states = i.users_state
+        exam_states = [list(filter(lambda u: u.azmoon_id == i.id, user.user_state))[0] for user in i.users]
         exam_states_dict = []
         for j in exam_states:
             exam_states_dict.append(
                 {"exam_name": i.name,
+                 "username": j.user.username,
                  "student_name": j.user.name,
-                 "current": j.state}
+                 "current": j.state,
+                 "id": j.user_id}
             )
         states.extend(exam_states_dict)
 
@@ -99,7 +128,8 @@ def dashboard():
                            csrf_token=session['csrf_token'],
                            answers=answers,
                            results=results,
-                           states=states)
+                           states=states,
+                           round_function=round)
 
 
 @blueprint.route("/teacher/update-password", methods=['GET', 'POST'])
@@ -142,27 +172,31 @@ def register_azmoon():
                 return redirect(url_for('teachers.register_azmoon'))
         azmoon = Azmoon(teacher_id=teacher.id,
                         name=form.azmoon_name.data,
-                        is_available=False)
+                        is_available=False,
+                        exam_type=form.exam_type.data)
         db.session.add(azmoon)
-        db.session.commit()
         if len(users) != 0:
             for user in users:
                 new_user = User.query.filter_by(username=user).first()
-                if not new_user.azmoon_id and not new_user.answered:
+                if new_user.azmoon_id and not new_user.answered:
                     flash(f"دانش آموز {new_user.name}یک آزمون فعال دارد.")
                     return redirect(url_for('teachers.register_azmoon'))
                 new_user.azmoon_id = azmoon.id
+                new_user.answered = None
                 state = UserState(user_id=new_user.id,
                                   azmoon_id=azmoon.id,
                                   state="معمولی")
                 db.session.add(state)
-                db.session.commit()
 
+
+        db.session.commit()
         flash("آزمون جدید ثبت شد.")
         return redirect(url_for("teachers.dashboard"))
 
+    students = dumps(list(map(lambda user: user.username, User.query.where(User.teacher_id == teacher.id).all())))
     return render_template("teachers/register-exam.html",
-                           form=form)
+                           form=form,
+                           students_json=students)
 
 
 @blueprint.route("/teacher/azmoon/delete/<id>", methods=['POST'])
@@ -184,15 +218,24 @@ def delete_azmoon(id):
         flash("شما دسترسی به این آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
+    if azmoon.exam_type == 1:
+        questions = DescQuestion.query.filter_by(azmoon_id=azmoon.id).all()
+        for q in questions:
+            db.session.delete(q)
+            db.session.commit()
+            for a in DescAnswer.query.filter_by(desc_question_id=q.id).all():
+                db.session.delete(a)
+                db.session.commit()
+    
     users = User.query.filter_by(azmoon_id=azmoon.id).all()
     for i in users:
-        i.azmoon_id = 0
-        i.answered = True
-    db.session.commit()
+        i.azmoon_id = None
+        i.answered = None
+        db.session.commit()
 
     db.session.delete(azmoon)
     db.session.commit()
-    flash(f"آزمون {azmoon.name}با موفقیت حذف شد. ")
+    flash(f"آزمون {azmoon.name} با موفقیت حذف شد. ")
     return redirect(url_for('teachers.dashboard'))
 
 
@@ -229,16 +272,16 @@ def modify_azmoon(id):
 
         exam.name = form.azmoon_name.data
         exam.is_available = form.is_available.data
-        db.session.commit()
 
         students = exam.users
         for i in students:
-            i.azmoon_id = 0
+            i.azmoon_id = None
             i.answered = True
-            db.session.delete(UserState.query.filter_by(azmoon_id=exam.id).first())
-        db.session.commit()
+        
+        UserState.query.filter_by(azmoon_id=exam.id).delete()
         users = form.users.data.strip().splitlines()
         for user in users:
+            print("user:", user)
             user_record = User.query.filter_by(username=user).first()
             if user_record.teacher_id != teacher.id:
                 flash(f"کاربر {user_record.username}برای شما ثبت نشده است.")
@@ -247,21 +290,16 @@ def modify_azmoon(id):
                               azmoon_id=exam.id,
                               state="normal")
             db.session.add(state)
-            db.session.commit()
+            print("user_id", state.user_id)
+            print("user_state", state.state)
+            user_record.answered = None
+            user_record.azmoon_id = exam.id
             if form.is_available.data:
-                user_record = User.query.filter_by(username=user).first()
                 user_record.answered = False
-                user_record.azmoon_id = exam.id
                 state = UserState.query.filter_by(user_id=user_record.id,
                                                   azmoon_id=user_record.azmoon_id).first()
-                state_text = """
-                هنوز ازمون نداده است.
-                <form method='POST' action={{url_for('teachers.send_mail', user_id=user_id)}}>
-                <input type='submit' value='ارسال ایمیل'>
-                </form>"""
-                state.state = render_template_string(state_text,
-                                                     user_id=user_record.id)
-
+                state.state = "NOT_SUBMITTED"
+                
             db.session.commit()
 
         flash("ازمون با موفقیت به روزرسانی شد.")
@@ -285,6 +323,14 @@ def register_user():
     if result := check_teacher_logged_in():
         return result
 
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    users_count = len(User.query.where(User.teacher_id == teacher.id).all())
+
+    if teacher.student_limit != -1:
+        if users_count >= teacher.student_limit:
+            flash("شما به حد مجاز ثبت دانش اموز رسیده اید.")
+            return redirect(url_for('teachers.dashboard'))
+    
     form = RegisterUserForm()
     if form.validate_on_submit():
         teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
@@ -294,8 +340,7 @@ def register_user():
                         teacher_id=teacher.id,
                         password=hashing.hash_value("#" + form.username.data + "123",
                                                     salt=os.getenv("SALT")),
-                        answered=True,
-                        azmoon_id=0)
+                        answered=True)
 
         db.session.add(new_user)
         db.session.commit()
@@ -326,6 +371,10 @@ def delete_user(id):
 
     db.session.delete(user)
     db.session.commit()
+    desc_answers = DescAnswer.query.filter_by(student_id=user.id).all()
+    for d in desc_answers:
+        db.session.delete(d)
+        db.session.commit()
     flash(f"کاربر {user.name} با موفقیت حذف شد.")
     return redirect(url_for('teachers.dashboard'))
 
@@ -380,17 +429,24 @@ def questions(id):
         flash("شما دسترسی به آزمون ندارید.")
         return redirect(url_for('teachers.dashboard'))
 
-    questions = RealQuestion.query.filter_by(azmoon_id=id).all()
-    choices = {}
-    for i in questions:
-        choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
+    if not exam.exam_type:
+        questions = RealQuestion.query.filter_by(azmoon_id=id).all()
+        choices = {}
+        for i in questions:
+            choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
+        # tashrihi question!
+
+    else:
+        questions = DescQuestion.query.filter_by(azmoon_id=id).all()
+        choices = None
 
     session['csrf_token'] = secrets.token_urlsafe(32)
     return render_template("teachers/questions.html",
                            questions=questions,
                            exam=exam,
                            choices=choices,
-                           csrf_token=session['csrf_token'])
+                           csrf_token=session['csrf_token'],
+                           exam_type=exam.exam_type)
 
 
 @blueprint.route('/teacher/questions/add/<exam_id>', methods=['GET', 'POST'])
@@ -551,7 +607,8 @@ def add_choice(exam_id, q_id):
         return redirect(url_for('teachers.questions', id=exam_id))
 
     return render_template("teachers/add-choice.html",
-                           form=form)
+                           form=form,
+                           exam_id=exam_id)
 
 
 @blueprint.route("/teacher/questions/delete-option/<exam_id>/<q_id>/<option_id>", methods=['POST'])
@@ -600,9 +657,118 @@ def delete_option(exam_id, q_id, option_id):
     flash("گزینه با موفقیت حذف شد.", category="success")
     return redirect(url_for('teachers.questions', id=exam_id))
 
+@blueprint.route("/teacher/questions/add-desc/<exam_id>", methods=["POST", "GET"])
+def add_desc(exam_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    exam = Azmoon.query.filter_by(id=exam_id).first()
+    if not exam:
+        flash("آزمون یافت نشد.")
+        return redirect(url_for('teachers.dashboard'))
+
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    if exam.teacher_id != teacher.id:
+        flash("شما دسترسی به آزمون ندارید.")
+        return redirect(url_for('teachers.dashboard'))
+
+    if exam.is_available:
+        flash("امکان افزودن سوال پس از ثبت شدن آزمون، وجود ندارد.")
+        return redirect(url_for('teachers.dashboard'))
+    
+    form = AddDescQuestionForm()
+    if form.validate_on_submit():
+        if form.photo.data:
+            file = form.photo.data
+            ext = Path(file.filename).suffix
+            filename = f"{uuid4()}{ext}"
+            
+            path = Path(current_app.config["UPLOAD_DIR"]) / filename
+            file.save(path)
+            
+            new_q = DescQuestion(
+                azmoon_id = exam_id,
+                text = form.text.data,
+                desc_answer = form.desc_answer.data,
+                photo_name = filename
+            )
+            db.session.add(new_q)
+            db.session.commit()
+            flash("سوال با موفقیت اضافه شد.")
+            return redirect(url_for("teachers.questions", id=exam_id,
+                                    path = Path(current_app.config["UPLOAD_DIR"])))
+        
+        else:
+            new_q = DescQuestion(
+                azmoon_id = exam_id,
+                text = form.text.data,
+                desc_answer = form.desc_answer.data
+            )
+
+            db.session.add(new_q)
+            db.session.commit()
+            flash("سوال با موفقیت اضافه شد.")
+            return redirect(url_for("teachers.questions", id=exam_id))
+        
+    return render_template("teachers/add-desc-question.html",
+                           exam_id=exam.id,
+                           form=form)
+
+
+@blueprint.route("/teacher/questions/remove_desc_question/<q_id>", methods=["POST"])
+def delete_desc_question(q_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    question = DescQuestion.query.filter_by(id=q_id).first()
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    exam = Azmoon.query.filter_by(id=question.azmoon_id,
+                                  teacher_id=teacher.id).first()
+    
+    if not exam:
+        flash("این سوال برای شما نیست.")
+        return redirect(url_for("teachers.dashboard"))
+    
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.questions', id=exam.id))
+    
+    db.session.delete(question)
+    db.session.commit()
+    flash("سوال با موفقیت حذف شد.")
+    return redirect(url_for('teachers.questions', id=exam.id))
+
+
+@blueprint.route("/teacher/questions/modify_desc_question/<q_id>", methods=["GET", "POST"])
+def modify_desc_question(q_id):
+    if result := check_teacher_logged_in():
+        return result
+
+    question = DescQuestion.query.filter_by(id=q_id).first()
+    teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
+    exam = Azmoon.query.filter_by(id=question.azmoon_id,
+                                  teacher_id=teacher.id).first()
+    
+    if not exam:
+        flash("این سوال برای شما نیست.")
+        return redirect(url_for("teachers.dashboard"))
+    
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.questions', id=exam.id))
+    
+
+
 
 @blueprint.route("/teacher/send_mail/<user_id>", methods=["POST"])
 def send_mail(user_id):
+    if result := check_teacher_logged_in():
+        return result
+    
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.dashboard'))
+    
     user = User.query.filter_by(id=user_id).first()
     email = user.email
     body = f"""
@@ -618,6 +784,32 @@ def send_mail(user_id):
         to=[email]
     )
     msg.content_subtype = "html"
-    msg.send()
-    flash("پیغام ارسال شد.", category="success")
-    return redirect(url_for("teachers.dashboard"))
+    try:
+        msg.send()
+        flash("پیغام ارسال شد.", category="success")
+    except gaierror:
+        flash("ارسال با خطا مواجه شد. اندکی بعد مجدد تلاش کنید.")
+
+    finally:
+        return redirect(url_for("teachers.dashboard"))
+    
+
+@blueprint.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+    return send_from_directory(
+        current_app.config["UPLOAD_DIR"],
+        filename
+    )
+
+@blueprint.route("/teachers/logout", methods=["POST"])
+def log_out():
+    if result := check_teacher_logged_in():
+        return result
+    
+    if session.get('csrf_token') != request.form['csrf_token']:
+        flash("CSRF تایید نشد.")
+        return redirect(url_for('teachers.dashboard'))
+    
+    del session["teacher_username"]
+    flash("با موفقیت خارج شدید.")
+    return redirect(url_for("home.home"))

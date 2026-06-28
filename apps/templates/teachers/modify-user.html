@@ -10,6 +10,7 @@
 {% include 'form-errors.html' %}
 {% include 'flash-messages.html' %}
 <h1>تغییر اطلاعات دانش اموز</h1>
+<a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
 <form action="" method="post">
     {{ form.csrf_token }}
     {{ form.name.label }}: {{ form.name }}

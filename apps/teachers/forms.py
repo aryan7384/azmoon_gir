@@ -1,10 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, RadioField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
 from apps.database import db
 from apps.users.models import *
 import os
 
+# set proper limits for forms
 
 class LoginForm(FlaskForm):
     username = StringField('نام کاربری', validators=[DataRequired()])
@@ -44,13 +46,18 @@ class RegisterExamForm(FlaskForm):
     azmoon_name = StringField('نام آزمون', validators=[DataRequired(),
                                                        Length(max=50)])
     users = TextAreaField('کاربرانی که ازمون برای انها فعال میشود')
+    exam_type = RadioField("نوع ازمون", validators=[DataRequired()],
+                           choices=[
+                               (0, "تستی"),
+                               (1, "تشریحی")
+                           ])
 
     def validate_azmoon_name(self, field):
         if Azmoon.query.filter_by(name=field.data).first():
             raise ValidationError("نام آزمون تکراری است")
 
     def validate_users(self, field):
-        users = field.data.strip().split(os.linesep)
+        users = field.data.strip().splitlines()
         if len(users) == 1 and users[0] == "":
             return
         for user in users:
@@ -66,7 +73,7 @@ class ModifyExamForm(FlaskForm):
     is_available = BooleanField("ایا ازمون در دسترس کاربران قرار داده شود؟", default=False)
 
     def validate_users(self, field):
-        users = field.data.strip().split(os.linesep)
+        users = field.data.strip().splitlines()
         if len(users) == 1 and users[0] == "":
             pass
         else:
@@ -88,3 +95,27 @@ class ModifyQuestionForm(FlaskForm):
 class AddChoiceForm(FlaskForm):
     text = StringField('متن گزینه', validators=[DataRequired()])
     is_correct = BooleanField('آیااین گزینه درست است؟')
+
+class AddDescQuestionForm(FlaskForm):
+    text = StringField("متن سوال", validators=[DataRequired(),
+                                               Length(max=1500)])
+    desc_answer = StringField("پاسخ تشریحی", validators=[DataRequired(),
+                                               Length(max=1500)])
+    photo = FileField(
+        "تصویر سوال (اختیاری)",
+        validators=[
+            FileAllowed(["jpg", "jpeg", "png", "webp"], "تصویر فقط به فرمت های jpg, png, webp پذیرفته می شود.")
+        ]
+    )
+
+
+class ModifyDescQuestionForm(FlaskForm):
+    text = StringField("متن سوال", validators=[DataRequired()])
+    desc_answer = StringField("پاسخ تشریحی", validators=[DataRequired(),
+                                               Length(max=1500)])
+    photo = FileField(
+        "تصویر سوال (اختیاری)",
+        validators=[
+            FileAllowed(["jpg", "jpeg", "png", "webp"], "تصویر فقط به فرمت های jpg, png, webp پذیرفته می شود.")
+        ]
+    )

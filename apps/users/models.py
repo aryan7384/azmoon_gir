@@ -10,7 +10,9 @@ __all__ = ["User",
            "Answer",
            "Result",
            "UserState",
-           "Teacher"]
+           "Teacher",
+           "DescQuestion",
+           "DescAnswer"]
 
 
 class Teacher(BaseModel):
@@ -30,13 +32,12 @@ class User(BaseModel):
     name: Mapped[str] = mapped_column(String(70), unique=False, nullable=False)
     teacher_id: Mapped[int] = mapped_column(ForeignKey("teacher.id"), nullable=False)
     azmoon_id = mapped_column(
-        Integer,
         ForeignKey('azmoon.id'),
         nullable=True,
-        default=0
+        default=None
     )
 
-    answered: Mapped[bool] = mapped_column(nullable=False, default=False)
+    answered: Mapped[bool] = mapped_column(nullable=True, default=None)
 
     azmoon: Mapped["Azmoon"] = relationship(
         "Azmoon",
@@ -147,6 +148,22 @@ class RealOption(BaseModel):
         cascade="all, delete-orphan"
     )
 
+class DescQuestion(BaseModel):
+    __tablename__ = "desc_question"
+    azmoon_id: Mapped[int]
+    text = mapped_column(String(400), nullable=False)
+    desc_answer = mapped_column(String(2000), nullable=False)
+    photo_name = mapped_column(String(100), nullable=True)
+
+
+class DescAnswer(BaseModel):
+    __tablename__ = "desc_answer"
+    azmoon_id: Mapped[int] = mapped_column(nullable=False)
+    student_id: Mapped[int] = mapped_column(nullable=False)
+    desc_question_id: Mapped[int] = mapped_column(nullable=False)
+    answer: Mapped[str] = mapped_column(String(500), nullable=False)
+    is_true: Mapped[int] = mapped_column(nullable=True)
+
 
 class Answer(BaseModel):
     __tablename__ = 'answer'
@@ -214,7 +231,7 @@ class UserState(BaseModel):
     user_id: Mapped[int] = mapped_column('student_id', ForeignKey('user.id', name='fk_real_user_state_id'))
     azmoon_id: Mapped[int] = mapped_column('exam_id', ForeignKey('azmoon.id', name='fk_real_exam_id'))
 
-    state: Mapped[str] = mapped_column(String(100), default="Normal")
+    state: Mapped[str] = mapped_column(String(300), default="Normal")
 
     user: Mapped["User"] = relationship(
         "User",

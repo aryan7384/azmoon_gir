@@ -3,11 +3,14 @@ from .forms import *
 from ..database import db
 from .models import *
 from ..extensions import *
+import calc_result
+from apps import tasks
 import os
 import secrets
 import dotenv
 import random
 from flask_mailman import EmailMessage
+import time
 
 dotenv.load_dotenv()
 
@@ -25,9 +28,8 @@ def get_user(username):
 
 def calculate_result(user):
     user_azmoon = Azmoon.query.filter_by(id=user.azmoon_id).first()
-    user.azmoon_id = 0
+    user.azmoon_id = None
     user.answered = True
-    db.session.commit()
     questions = RealQuestion.query.filter_by(azmoon_id=user_azmoon.id).all()
     total_questions = len(questions)
 
@@ -149,12 +151,12 @@ def update_password():
     if update_password_form.validate_on_submit():
         if not bool(User.query.filter(User.username == username,
                                       User.password == hashing.hash_value(
-                                          update_password_form.old_password.data, salt="thisiselonmusk"
+                                          update_password_form.old_password.data, salt=os.getenv("SALT")
                                       )).count()):
             flash("رمز اشتباه است", "danger")
             return render_template("users/update_password.html", form=update_password_form)
         hashed_password = hashing.hash_value(update_password_form.new_password.data,
-                                             salt="thisiselonmusk")
+                                             salt=os.getenv("SALT"))
         user = get_user(username)
         user.password = hashed_password
         db.session.commit()
@@ -225,47 +227,74 @@ def start_exam():
 
     exam = Azmoon.query.filter_by(id=user.azmoon_id).first()
     if request.method == 'POST':
-
         if request.form.get("csrf_token") != session['csrf_token']:
             flash("csrf تایید نشد.", "danger")
             return redirect(url_for("users.start_exam"))
+        
+        if exam.exam_type == 0:
+            questions_id = map(lambda q: str(q.id), RealQuestion.query.where(RealQuestion.azmoon_id == exam.id).all())
+            for q_id in questions_id:
+                user_id = user.id
+                selected = request.form.get(q_id)
 
-        questions_id = map(lambda q: str(q.id), RealQuestion.query.where(RealQuestion.azmoon_id == exam.id).all())
-        for q_id in questions_id:
-            user_id = user.id
-            selected = request.form.get(q_id)
+                if selected == "no_answer":
+                    continue
 
-            if selected == "no_answer":
-                continue
+                option_id = RealOption.query.filter_by(id=selected).first().id
+                a = Answer(for_student=user_id,
+                        for_question=q_id,
+                        answer=option_id)
 
-            option_id = RealOption.query.filter_by(id=selected).first().id
-            a = Answer(for_student=user_id,
-                       for_question=q_id,
-                       answer=option_id)
-
-            db.session.add(a)
+                db.session.add(a)
+            user_state = user.user_state
+            user_state.state = "پایان ازمون"
             db.session.commit()
-        user.answered = True
-        db.session.commit()
-        user_state = UserState.query.filter_by(user_id=user.id).first()
-        user_state.state = "پایان ازمون"
-        db.session.commit()
-        # check for User fields & new features
-        calculate_result(user)
-        return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
+            # check for User fields & new features
+            calculate_result(user)
+            return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
+
+        else:
+            questions = DescQuestion.query.filter_by(azmoon_id=exam.id).all()
+            for q in questions:
+                new_answer = DescAnswer(
+                    azmoon_id=exam.id,
+                    student_id=user.id,
+                    desc_question_id=q.id,
+                    answer=request.form[str(q.id)]
+                )
+                db.session.add(new_answer)
+                db.session.commit()
+            
+            tasks.grade_submission.delay(user.id, exam.id, False)
+            user.answered = True
+            user.azmoon_id = None
+            db.session.commit()
+            user_state = user.user_state
+            user_state.state = "پایان ازمون"
+            db.session.commit()
+            return render_template("users/azmoon/finish-desc.html")
+
 
     user_state = UserState.query.filter_by(user_id=user.id).first()
-    user_state.state = "در حال آرمون دادن"
+    user_state.state = "در حال آزمون دادن"
     db.session.commit()
     session['csrf_token'] = secrets.token_urlsafe(30)
 
-    return render_template("users/azmoon/start_exam.html",
-                           csrf_token=session['csrf_token'],
-                           Q=RealQuestion,
-                           azmoon=exam,
-                           A=RealOption,
-                           len_=len,
-                           zip=zip)
+    if exam.exam_type == 0:
+        return render_template("users/azmoon/start_exam.html",
+                               csrf_token=session['csrf_token'],
+                               Q=RealQuestion,
+                               azmoon=exam,
+                               A=RealOption,
+                               len_=len,
+                               zip=zip)
+
+    else:
+        return render_template("users/azmoon/start_exam.html",
+                               csrf_token=session["csrf_token"],
+                               azmoon=exam,
+                               Q=DescQuestion,
+                               enum=enumerate)
 
 
 @blueprint.route("/results")
@@ -290,6 +319,7 @@ def result_for(id_):
         flash("لطفا دوباره وارد شوید.", "info")
         return redirect(url_for('users.login'))
 
+    print(user.id)
     result = Result.query.filter_by(for_student=user.id,
                                     for_azmoon_id=id_).first()
     
@@ -302,7 +332,7 @@ def result_for(id_):
     
     avg = sum(scores) / len(scores)
 
-    std = calc_S(scores)
+    std = calc_result.calc_S(scores)
     if std == 0:
         std = 1
 
@@ -316,9 +346,10 @@ def result_for(id_):
 
 
     z_score = (result.percent - avg) / std
-    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 10000)}\r\nتراز قلمچی: {round(z_score * 1000 + 5000)}"
+    std_sample_text = f"تراز سنجش: {round(z_score * 2000 + 10000)} | تراز قلمچی: {round(z_score * 1000 + 5000)}"
     return render_template("users/azmoon/result_for.html",
                            result=result,
                            name=user.username,
                            std_sample_text=std_sample_text,
-                           rank=rank)
+                           rank=rank,
+                           round=round)

@@ -10,9 +10,9 @@
         {{ form.csrf_token }}
         ایمیل: {{ form.email }}
         <br>
-        <input type="submit" value="Update" class="button-customized">
+        <input type="submit" value="بروزرسانی" class="green-button">
     </form>
     <hr>
-    <a href="{{ url_for('users.update_password') }}" class="float-right">تغییر رمز عبور</a>
-    <a href="{{ url_for('users.logout') }}" class="float-right">خروج از حساب کاربری</a>
+    <a href="{{ url_for('users.update_password') }}" class="blue-button">تغییر رمز عبور</a>
+    <a href="{{ url_for('users.logout') }}" class="red-button">خروج از حساب کاربری</a>
 {% endblock %}
