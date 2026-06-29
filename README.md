@@ -84,7 +84,7 @@ Follow these steps to run azmoon_gir locally.
 * Redis
 * Celery
 
-the project should be ran on linux/macOS opearing systems.
+the project should be run on Linux or macOS.
 
 ### Clone
 
