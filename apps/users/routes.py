@@ -401,7 +401,7 @@ def result_for(id_):
             results_for_user.append({
                 "question": q.text,
                 "answer": answer.answer,
-                "is_true": answer.is_true
+                "is_true": "t" if answer.is_true else "f"
             })
 
     return render_template(
