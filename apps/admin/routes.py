@@ -117,8 +117,14 @@ def remove_teacher(teacher_id):
 
     exams = Azmoon.query.filter_by(teacher_id=teacher.id).all()
     for exam in exams:
+        for q in DescQuestion.query.filter_by(azmoon_id=exam.id).all():
+            DescAnswer.query.filter_by(desc_question_id=q.id).delete()
+            db.session.delete(q)
+
+        db.session.flush()
         db.session.delete(exam)
         
+    db.session.flush()
     db.session.delete(teacher)
     db.session.commit()
 
