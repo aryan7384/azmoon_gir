@@ -106,12 +106,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Configure environment variables
-
-Create a `.env` file in the project root.
-
-the information needed for this section is in .env.example near this file.
-
 ### Database setup
 
 Create a MySQL database named azmoon_db.
@@ -135,6 +129,12 @@ redis-server
 ```bash
 celery -A celery_worker.celery worker --loglevel=info
 ```
+
+### Configure environment variables
+
+Create a `.env` file in the project root.
+
+the information needed for this section is in .env.example near this file.
 
 ### Run the application
 
