@@ -147,6 +147,10 @@ input[type="button"]{
     transition:.3s;
 }
 
+input {
+    direction: auto;
+}
+
 button:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover{
