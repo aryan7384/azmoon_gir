@@ -82,7 +82,7 @@ def register_teacher():
     
     form = RegisterTeacherForm()
     if form.validate_on_submit():
-        new_teacher = Teacher(username=form.username.data,
+        new_teacher = Teacher(username=form.username.data.lower(),
                               password=hashing.hash_value(
                                   form.password.data,
                                   salt=os.getenv("SALT")

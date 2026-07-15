@@ -36,9 +36,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         hashed_password = hashing.hash_value(form.password.data, salt=os.getenv("SALT"))
-        if Teacher.query.filter_by(username=form.username.data,
+        if Teacher.query.filter_by(username=form.username.data.lower(),
                                    password=hashed_password).first():
-            session['teacher_username'] = form.username.data
+            session['teacher_username'] = form.username.data.lower()
             return redirect(url_for('teachers.dashboard'))
 
         flash("نام کاربری یا رمز عبور اشتباه است.")

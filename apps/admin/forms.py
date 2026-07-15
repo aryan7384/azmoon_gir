@@ -18,7 +18,7 @@ class RegisterTeacherForm(FlaskForm):
     limit = IntegerField("محدودیت دانش اموزان", validators=[DataRequired()])
 
     def validate_username(self, field):
-        if Teacher.query.filter_by(username=field.data).first():
+        if Teacher.query.filter_by(username=field.data.lower()).first():
             raise ValidationError("نام کاربری تکراری است.")
         
     def validate_limit(self, field):
