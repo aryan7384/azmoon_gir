@@ -12,7 +12,7 @@
 {% include 'flash-messages.html' %}
 <br>
 <a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
-<form action="" method="POST">
+<form action="" method="POST" dir="auto">
     {{ form.csrf_token }}
     {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
     <br>

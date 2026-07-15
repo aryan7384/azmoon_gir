@@ -9,7 +9,7 @@
 <body>
     {% include 'flash-messages.html' %}
     <a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
-    <form method="post" action="">
+    <form method="post" action="" dir="auto">
         {{ form.csrf_token }}
         {{ form.title.label }}: {{ form.title }}
         <input type="submit" value="ثبت تغییرات">

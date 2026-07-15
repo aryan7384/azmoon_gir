@@ -9,7 +9,7 @@
 <body>
 {% include 'flash-messages.html' %}
 <a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
-<form action="" method="POST" novalidate="novalidate">
+<form action="" method="POST" novalidate="novalidate" dir="auto">
     {{ form.csrf_token }}
     {{ form.text.label }}: {{ form.text }}
     <br>
