@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت معلم جدید</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-</head>
-<body>
-    {% include "flash-messages.html" %}
-    <a href="{{ url_for('admin.admin_homepage') }}">بازگشت به صفحه اصلی</a>
+{% extends "base.html" %}
+
+{% block title %}ثبت معلم جدید{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('admin.admin_homepage') }}" class="blue-button">بازگشت به صفحه اصلی</a>
     <h1>اطلاعات معلم جدید را وارد کنید:</h1>
+    {% include "flash-messages.html" %}
     {% include "form-errors.html" %}
     <form method="POST" action="">
         {{ form.csrf_token }}
@@ -18,7 +14,6 @@
         {{ form.password.label }}: {{ form.password }}
         <br>
         {{ form.limit.label }}(برای حذف محدودیت عدد -1 را وارد کنید): {{ form.limit }}
-        <input type="submit" value="ثبت معلم جدید">
+        <input type="submit" value="ثبت معلم جدید" class="red-button">
     </form>
-</body>
-</html>
+{% endblock %}

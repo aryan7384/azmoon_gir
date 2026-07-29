@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تغییر متن سوال</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-</head>
-<body>
-    {% include 'flash-messages.html' %}
-    <a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
-    <form method="post" action="" dir="auto">
+{% extends "base.html" %}
+
+    {% block title %}تغییر متن سوال{% endblock %}
+
+    {% block content %}
+    <a class="blue-button" href="{{url_for('teachers.questions', id=exam_id)}}">بازگشت</a>
+<form action="" dir="auto" method="post">
         {{ form.csrf_token }}
         {{ form.title.label }}: {{ form.title }}
-        <input type="submit" value="ثبت تغییرات">
-    </form>
+        <input type="submit" value="ثبت تغییرات" class="green-button"/>
+</form>
     <div>
     <h2>گزینه ها</h2>
         {% for choice in choices %}
@@ -21,5 +16,5 @@
             </p>
         {% endfor %}
     </div>
-</body>
-</html>
+    {% endblock %}
+    

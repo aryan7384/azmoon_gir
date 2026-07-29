@@ -1,43 +1,65 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>ثبت آزمون</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-let jsonString = {{ students_json | tojson }};
+{% extends "base.html" %}
 
-function toggleAllStudents(checkbox) {
-    let field = document.getElementById("usersField");
+    {% block title %}ثبت آزمون{% endblock %}
 
-    if (checkbox.checked) {
-        let arr = JSON.parse(jsonString);
-        field.value = arr.join("\n");
-    } else {
-        field.value = "";
-    }
-}
-</script>
-</head>
-<body>
-{% include 'form-errors.html' %}
-{% include 'flash-messages.html' %}
-<a href="{{ url_for('teachers.dashboard') }}" class="green-button">بازگشت</a>
-<form method="POST" action="">
+    {% block content %}
+    {% include 'form-errors.html' %}
+<a class="blue-button" href="{{ url_for('teachers.dashboard') }}">بازگشت</a>
+<form action="" method="POST">
     {{ form.csrf_token }}
     {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
-    <br>
-    {{ form.users.label }} (نام کاربری ها را با اینتر جدا کنید): {{ form.users(id="usersField") }}
-    <br>
-    <label for="allStudents">همه دانش اموزان در ازمون باشند</label>
-    <input type="checkbox" id="allStudents" onclick="toggleAllStudents(this)">
-    <br>
-    {{ form.exam_type.label }}: {{ form.exam_type }}
-    <pre style="border: 2px solid black; font-style: oblique;">
+    <br/>
+    <select id="studentsCombo">
+        <option value="">-- انتخاب دانش‌آموز --</option>
+
+        {% for student in students_json %}
+            <option value="{{ student }}">
+                {{ student }}
+            </option>
+        {% endfor %}
+    </select>
+
+    {{ form.users.label(for="usersField") }} (نام کاربری ها را با اینتر جدا کنید): {{ form.users(id="usersField") }}
+    <br/>
+    <label for="allStudents">انتخاب تمام دانش اموز ها</label>
+    <input type="checkbox" id="allStudents"/>
+    <br/>
+    {{ form.exam_type.label }}: {{ form.exam_type(style="list-style-type:none") }}
+    <p style="border: 2px solid black; width: 100%;">
         توجه داشته باشید امکان تغییر نوع ازمون پس از ثبت ان وجود ندارد.
-    </pre>
-    <input type="submit" value="ثبت آزمون">
+    </p>
+<input type="submit" value="ثبت آزمون" class="green-button"/>
 </form>
-</body>
-</html>
+<script>
+const combo = document.getElementById("studentsCombo");
+const usersField = document.getElementById("usersField");
+const checkbox = document.getElementById("allStudents");
+
+combo.addEventListener("change", function () {
+    const student = this.value;
+
+    let currentStudents = usersField.value
+        .split(/\r?\n/)
+        .map(name => name.trim())
+        .filter(name => name !== "");
+
+    if (student && !currentStudents.includes(student)) {
+        currentStudents.push(student);
+    }
+
+    usersField.value = currentStudents.join("\n");
+    this.value = "";
+});
+
+checkbox.addEventListener("change", function () {
+    if (this.checked) {
+        const values = Array.from(combo.options)
+            .map(option => option.value)
+            .filter(value => value !== "");
+
+        usersField.value = values.join("\n");
+    }
+});
+</script>
+    {% endblock %}
+    

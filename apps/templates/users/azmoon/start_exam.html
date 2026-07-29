@@ -3,13 +3,21 @@
 {% block title %}آزمون{% endblock title %}
 
 {% block content %}
+<style>
+    .question, .question * {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+</style>
 <form action="" method="post">
     {% include 'flash-messages.html' %}
 
     <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
     
     {% if azmoon.exam_type == 0 %}
-    <div>
+    <div class="question">
     {% for question in zip(Q.query.filter_by(azmoon_id = azmoon.id).all()|shuffle,
         range(1, len_(Q.query.filter_by(azmoon_id = azmoon.id).all()) + 1)) %}
     <p>{{ question[1] }}. {{ question[0].title }}</p>
@@ -32,7 +40,7 @@
     <hr>
     {% endfor %}
     {% else %}
-    <div>
+    <div class="question">
         {% for q in Q.query.filter_by(azmoon_id = azmoon.id).all()|shuffle %}
         <div>
             <p>{{q.text}}</p>

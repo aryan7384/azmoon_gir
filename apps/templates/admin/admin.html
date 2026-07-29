@@ -1,22 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>پنل ادمین</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-{% include 'flash-messages.html' %}
+{% extends "base.html" %}
 
+{% block title %}پنل ادمین{% endblock %}
+
+{% block content %}
     <h1>پنل ادمین</h1>
     <form action="{{url_for('admin.logout')}}" method="POST">
         <input type="hidden" value="{{csrf_token}}" name="csrf_token">
         <input type="submit" class="red-button" value="خروج از پنل ادمین"></input>
     </form>
     <div class="actions">
-        <a href="{{ url_for('admin.manage_teachers') }}">مدیریت معلم ها</a>
+        <a href="{{ url_for('admin.manage_teachers') }}" class="blue-button">مدیریت معلم ها</a>
     </div>
-</body>
-</html>
+{% endblock %}

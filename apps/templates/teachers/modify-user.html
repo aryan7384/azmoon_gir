@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>تغییر اطلاعات دانش اموز</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-{% include 'form-errors.html' %}
-{% include 'flash-messages.html' %}
+{% extends "base.html" %}
+
+    {% block title %}تغییر اطلاعات دانش اموز{% endblock %}
+
+    {% block content %}
+    {% include 'form-errors.html' %}
 <h1>تغییر اطلاعات دانش اموز</h1>
-<a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
+<a class="blue-button" href="{{url_for('teachers.dashboard')}}">بازگشت</a>
 <form action="" method="post">
     {{ form.csrf_token }}
     {{ form.name.label }}: {{ form.name }}
-    <br>
+    <br/>
     {{ form.email.label }}: {{ form.email }}
-    <br>
-    <input type="submit" value="تغییر اطلاعات">
+    <br/>
+<input type="submit" value="تغییر اطلاعات" class="green-button"/>
 </form>
-</body>
-</html>
+    {% endblock %}
+    

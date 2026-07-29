@@ -1,34 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>افزودن سوال تشریحی</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-</head>
-<body>
+{% extends "base.html" %}
+
+    {% block title %}افزودن سوال تشریحی{% endblock %}
+
+    {% block content %}
     <h1>افزودن سوال تشریحی</h1>
-    {% include 'flash-messages.html' %}
     {% include 'form-errors.html' %}
-    <a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
-    <div>
-        <form action="{{url_for('teachers.add_desc', exam_id=exam_id)}}" method="POST" enctype="multipart/form-data">
+    <a class="blue-button" href="{{url_for('teachers.questions', id=exam_id)}}">بازگشت</a>
+<div>
+<form action="{{url_for('teachers.add_desc', exam_id=exam_id)}}" enctype="multipart/form-data" method="POST">
             {{form.csrf_token}}
             {{form.text.label}}: {{form.text}}
-            <br>
+            <br/>
             {{form.desc_answer.label}}: {{form.desc_answer}}
-            <br>
+            <br/>
             {{form.photo.label}}
-            <br>
+            <br/>
             {{form.photo(id="image")}}
-            <br>
-            <i>فقط فرمت های jpg, webp, png پذیرفته است.</i>
-            <br>
-            <img id="preview" alt="Image preview">
-            <input type="submit" value="ثبت سوال" class="blue-button">
-        </form>
-    </div>
-    <script>
+            <br/>
+<i>فقط فرمت های jpg, webp, png پذیرفته است.</i>
+<br/>
+<img alt="Image preview" id="preview"/>
+<input class="green-button" type="submit" value="ثبت سوال"/>
+</form>
+</div>
+<script>
         const input = document.getElementById("image");
         const preview = document.getElementById("preview");
 
@@ -47,5 +42,5 @@
           }
         });
         </script>
-</body>
-</html>
+    {% endblock %}
+    

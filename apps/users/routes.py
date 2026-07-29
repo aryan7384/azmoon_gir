@@ -248,7 +248,6 @@ def start_exam():
             user_state = user.user_state
             user_state.state = "پایان ازمون"
             db.session.commit()
-            # check for User fields & new features
             calculate_result(user)
             return render_template("users/azmoon/finished.html", azmoon_id=exam.id)
 

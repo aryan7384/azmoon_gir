@@ -1,76 +1,71 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>سوالات آزمون {{exam.name}}</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<h1>سوالات آزمون {{exam.name}}</h1>
-{% include 'flash-messages.html' %}
-<br>
-<a href="{{ url_for('teachers.dashboard') }}" class="green-button">بازگشت به صفحه اصلی</a>
-<br>
+{% extends "base.html" %}
+
+    {% block title %}سوالات آزمون {{exam.name}}{% endblock %}
+
+    {% block content %}
+    <h1>سوالات آزمون {{exam.name}}</h1>
+<br/>
+<a class="blue-button" href="{{ url_for('teachers.dashboard') }}">بازگشت به صفحه اصلی</a>
+<br/>
 <div>
     {% if exam_type == 0 %}
-    <a href="{{ url_for('teachers.add_question', exam_id=exam.id) }}" class="blue-button">افزودن سوال</a>
-    <br>
-    <br>
+    <a class="green-button" href="{{ url_for('teachers.add_question', exam_id=exam.id) }}">افزودن سوال</a>
+<br/>
+<br/>
     {% for question in questions %}
     شناسه: {{ question.id }}
-        <br>
+        <br/>
     عنوان: {{ question.title }}
-        <br>
-        <a href="{{ url_for('teachers.modify_question', exam_id=exam.id, q_id=question.id) }}" class="blue-button">تغییر متن سوال</a>
-        <form action="{{ url_for('teachers.delete_question', exam_id=exam.id, q_id=question.id) }}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-            <input type="submit" value="حذف سوال" class="red-button">
-        </form>
-        <div>
-            <h2>گزینه ها</h2>
-            <a href="{{ url_for('teachers.add_choice', exam_id=exam.id, q_id=question.id) }}" class="green-button">ثبت گزینه</a>
+        <br/>
+<a class="green-button" href="{{ url_for('teachers.modify_question', exam_id=exam.id, q_id=question.id) }}">تغییر متن سوال</a>
+<form action="{{ url_for('teachers.delete_question', exam_id=exam.id, q_id=question.id) }}" method="post">
+<input name="csrf_token" type="hidden" value="{{ csrf_token }}"/>
+<input class="red-button" type="submit" value="حذف سوال"/>
+</form>
+<div>
+<h2>گزینه ها</h2>
+<a class="green-button" href="{{ url_for('teachers.add_choice', exam_id=exam.id, q_id=question.id) }}">ثبت گزینه</a>
             {% for choice in choices[question.id] %}
                 <p>{{ choice.text }}
                 {% if choice.is_correct %}
                     <span>(گزینه درست)</span>
                 {% endif %}
                 </p>
-                <form action="{{ url_for('teachers.delete_option',
+<form action="{{ url_for('teachers.delete_option',
                                          exam_id=exam.id, q_id=question.id, option_id=choice.id) }}" method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                    <input type="submit" value="حذف گزینه" class="red-button">
-                </form>
+<input name="csrf_token" type="hidden" value="{{ csrf_token }}"/>
+<input class="red-button" type="submit" value="حذف گزینه"/>
+</form>
             {% endfor %}
         </div>
-        <hr>
+<hr/>
     {% endfor %}
     {% if not questions %}
 	<p>سوالی یافت نشد!</p>
     {% endif %}
     {% else %}
-    <a href="{{url_for('teachers.add_desc', exam_id=exam.id)}}" class="green-button">افزودن سوال</a>
-    <br>
-    <div>
+    <a class="green-button" href="{{url_for('teachers.add_desc', exam_id=exam.id)}}">افزودن سوال</a>
+<br/>
+<div>
         {% for q in questions %}
         صورت سوال:
-        <br>
+        <br/>
         {{q.text}}
-        <br>
+        <br/>
         پاسخ تشریحی:
-        <br>
+        <br/>
         {{q.desc_answer}}
-        <br>
+        <br/>
         {% if q.photo_name %}
         تصویر سوال:
-        <img src="{{ url_for('teachers.uploaded_file', filename=q.photo_name) }}" alt="Question image"
-        style="max-width: 100%">
-        <br>
+        <img alt="Question image" src="{{ url_for('teachers.uploaded_file', filename=q.photo_name) }}"
+             style="max-width: 100%; border: 1px solid black"/>
+<br/>
         {% endif %}
         <form action="{{url_for('teachers.delete_desc_question', q_id=q.id)}}" method="POST">
-            <input type="hidden" value="{{ csrf_token }}" name="csrf_token">
-            <input type="submit"class="red-button" value="حذف سوال">
-        </form>
+<input name="csrf_token" type="hidden" value="{{ csrf_token }}"/>
+<input class="red-button" type="submit" value="حذف سوال"/>
+</form>
         {% endfor %}
         {% if not questions %}
 	    <p>سوالی یافت نشد!</p>
@@ -78,5 +73,5 @@
     </div>
     {% endif %}
 </div>
-</body>
-</html>
+    {% endblock %}
+    

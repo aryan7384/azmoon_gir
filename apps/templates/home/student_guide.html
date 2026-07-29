@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}راهنمای دانش‌آموز{% endblock %}
+
+{% block content %}
+
+<section class="guide">
+    <h1>راهنمای دانش‌آموز</h1>
+
+    <p class="guide-description">
+        برای شرکت در آزمون‌های آنلاین، مراحل زیر را به ترتیب انجام دهید.
+    </p>
+
+    <div class="guide-timeline">
+
+        <div class="guide-step">
+            <div class="guide-number">1</div>
+            <div class="guide-content">
+                <h2>دریافت اطلاعات ورود</h2>
+                <p>
+                    نام کاربری و رمز عبور خود را از معلم دریافت کنید.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">2</div>
+            <div class="guide-content">
+                <h2>ورود به سامانه</h2>
+                <p>
+                    وارد سایت شوید و از منوی بالای صفحه گزینه
+                    <strong>«ورود»</strong>
+                    را انتخاب کنید.
+                    <a href="{{ url_for('users.dashboard') }}" class="green-button">ورود به حساب دانش اموز</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">3</div>
+            <div class="guide-content">
+                <h2>فراموشی رمز عبور</h2>
+                <p>
+                    اگر رمز عبور خود را فراموش کرده‌اید، روی
+                    <strong>«بازیابی رمز عبور»</strong>
+                    کلیک کنید. رمز جدید به ایمیل ثبت‌شده شما ارسال خواهد شد.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">4</div>
+            <div class="guide-content">
+                <h2>حساب کاربری</h2>
+                <p>
+                    پس از ورود، به صفحه حساب کاربری هدایت می‌شوید. در این بخش
+                    می‌توانید رمز عبور و آدرس ایمیل خود را تغییر دهید.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">5</div>
+            <div class="guide-content">
+                <h2>شرکت در آزمون</h2>
+                <p>
+                    از منوی سایت روی گزینه
+                    <strong>«آزمون»</strong>
+                    کلیک کنید.
+                    آزمون‌هایی که زمان برگزاری آن‌ها فرا رسیده باشد، به صورت
+                    فعال نمایش داده می‌شوند.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">6</div>
+            <div class="guide-content">
+                <h2>پاسخ‌گویی به سؤالات</h2>
+                <p>
+                    روی آزمون موردنظر کلیک کنید، به همه سؤالات پاسخ دهید و در
+                    پایان روی دکمه
+                    <strong>«پایان آزمون»</strong>
+                    کلیک کنید.
+                </p>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">7</div>
+            <div class="guide-content">
+                <h2>دریافت کارنامه</h2>
+                <ul>
+                    <li>در آزمون‌های تستی، کارنامه بلافاصله صادر می‌شود.</li>
+                    <li>در آزمون‌های تشریحی، کارنامه پس از تصحیح توسط هوش مصنوعی صادر خواهد شد.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-step">
+            <div class="guide-number">8</div>
+            <div class="guide-content">
+                <h2>مشاهده کارنامه‌ها</h2>
+                <p>
+                    از منوی سایت گزینه
+                    <strong>«کارنامه‌ها»</strong>
+                    را انتخاب کنید تا تمامی کارنامه‌های خود را مشاهده نمایید.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

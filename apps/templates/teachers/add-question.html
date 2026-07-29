@@ -1,20 +1,15 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title> افزودن سوال به ازمون {{ exam.name }}</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<h1>افزودن سؤال</h1>
-{% include 'flash-messages.html' %}
-<a href="{{url_for('teachers.questions', id=exam.id)}}" class="green-button">بازگشت</a>
-<form method="POST" action="" dir="auto">
+{% extends "base.html" %}
+
+    {% block title %}افزودن سوال به ازمون {{ exam.name }}{% endblock %}
+
+    {% block content %}
+    <h1>افزودن سؤال</h1>
+<a class="blue-button" href="{{url_for('teachers.questions', id=exam.id)}}">بازگشت</a>
+<form action="" dir="auto" method="POST">
     {{ form.csrf_token }}
     {{ form.title.label }}: {{ form.title }}
-    <br>
-    <input type="submit" value="ثبت سوال">
+    <br/>
+<input type="submit" value="ثبت سوال" class="green-button"/>
 </form>
-</body>
-</html>
+    {% endblock %}
+    

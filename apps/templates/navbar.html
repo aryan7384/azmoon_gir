@@ -1,13 +1,67 @@
-<nav>
-    <a href="{{ url_for('home.home') }}">صفحه اصلی</a>
-    {% if not session.get("username") %}
-        <a href="{{ url_for('users.login') }}">ورود</a>
-    {% else %}
-        <a href="{{ url_for('users.dashboard') }}">حساب کاربری</a>
-        <a href="{{ url_for('users.logout') }}">خروج از حساب کاربری</a>
-        <a href="{{ url_for('users.azmoon') }}">آزمون</a>
-        <a href="{{ url_for('users.results') }}">کارنامه ها</a>
-    {% endif %}
-    <a href="{{ url_for('admin.admin_homepage') }}">پنل ادمین</a>
-    <a href="{{ url_for('teachers.dashboard') }}">پنل معلم</a>
+<nav id="azmoon-navbar">
+
+    <div id="azmoon-logo">
+        آزمون آنلاین
+    </div>
+
+    <div id="azmoon-menu" onclick="azmoonOpenMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <ul id="azmoon-nav">
+
+        <li>
+            <a href="{{ url_for('home.home') }}">صفحه اصلی</a>
+        </li>
+
+        {% if not session.get("username") %}
+
+            <li>
+                <a href="{{ url_for('users.login') }}">ورود</a>
+            </li>
+
+        {% else %}
+
+            <li>
+                <a href="{{ url_for('users.dashboard') }}">داشبورد دانش اموز</a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('users.logout') }}" style="background-color: red;">خروج از حساب دانش اموز</a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('users.azmoon') }}">آزمون</a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('users.results') }}">کارنامه‌ ها</a>
+            </li>
+
+        {% endif %}
+
+        {% if session.get("admin_logged_in") %}
+        <li>
+            <a href="{{ url_for('admin.logout') }}" style="background-color: red">خروج از پنل ادمین</a>
+        </li>
+        {% endif %}
+        <li>
+            <a href="{{ url_for('admin.admin_homepage') }}">پنل ادمین</a>
+        </li>
+
+
+
+        {% if session.get("teacher_username") %}
+        <li>
+            <a href="{{ url_for('teachers.log_out') }}" style="background-color: red">خروج از پنل معلم</a>
+        </li>
+        {% endif %}
+        <li>
+            <a href="{{ url_for('teachers.dashboard') }}">پنل معلم</a>
+        </li>
+
+    </ul>
+
 </nav>

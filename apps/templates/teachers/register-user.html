@@ -1,27 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ثبت کاربر جدید</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-{% include 'form-errors.html' %}
-<a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
+{% extends "base.html" %}
+
+    {% block title %}ثبت کاربر جدید{% endblock %}
+
+    {% block content %}
+    {% include 'form-errors.html' %}
+<a class="green-button" href="{{url_for('teachers.dashboard')}}">بازگشت</a>
 <form action="" method="post">
     {{ form.csrf_token }}
     {{ form.username.label }}: {{ form.username }}
-    <br>
+    <br/>
     {{ form.email.label }}: {{ form.email }}
-    <br>
+    <br/>
     {{ form.name.label }}: {{ form.name }}
-    <br>
-    <div>
-        <pre dir="rtl">رمز عبور کاربر جدید به این صورت تنظیم میشود:
+    <br/>
+<div>
+<pre dir="rtl">رمز عبور کاربر جدید به این صورت تنظیم میشود:
         <span dir="ltr">#(نام کاربری)123</span></pre>
-    </div>
+</div>
     {{ form.submit() }}
 </form>
-</body>
-</html>
+    {% endblock %}
+    

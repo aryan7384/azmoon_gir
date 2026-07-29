@@ -154,16 +154,12 @@ def modify_teacher(teacher_id):
     flash("سقف مجاز دانش اموز ها تغییر یافت.")
     return redirect(url_for("admin.manage_teachers"))
 
-@blueprint.route("/admin/logout", methods=["POST"])
+@blueprint.route("/admin/logout", methods=["GET", "POST"])
 def logout():
     if not (session.get("admin_logged_in") == True):
         flash("اول رمز عبور را وارد کنید.")
         return redirect(url_for('admin.login'))
 
-    if session.get("csrf_token") != request.form["csrf_token"]:
-        flash("CSRF تایید نشد.")
-        return redirect(url_for('admin.admin_homepage'))
-    
     del session["admin_logged_in"]
     flash("یا موفقیت خارج شدید")
     return redirect(url_for("home.home"))

@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <title>ورود به پنل معلم</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-</head>
-<body>
-<h1>اطلاعات خود را وارد کنید:</h1>
-{% include 'flash-messages.html' %}
+{% extends "base.html" %}
+
+    {% block title %}ورود به پنل معلم{% endblock %}
+
+    {% block content %}
+    <h1>اطلاعات خود را وارد کنید:</h1>
 {% include 'form-errors.html' %}
 <form action="" method="post">
     {{ form.csrf_token }}
     {{ form.username.label }}: {{ form.username }}
-    <br>
+    <br/>
     {{ form.password.label }}: {{ form.password }}
-    <br>
-    {{ form.submit }}
+    <br/>
+    {{ form.submit(class="green-button") }}
 
 </form>
-</body>
-</html>
+    {% endblock %}
+    

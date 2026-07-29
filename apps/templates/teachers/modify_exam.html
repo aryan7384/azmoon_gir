@@ -1,26 +1,21 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>تغییر مشخصات آزمون</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<h1>مشخصات آزمون را در اینجا تغییر دهید</h1>
+{% extends "base.html" %}
+
+    {% block title %}تغییر مشخصات آزمون{% endblock %}
+
+    {% block content %}
+    <h1>مشخصات آزمون را در اینجا تغییر دهید</h1>
 {% include 'form-errors.html' %}
-{% include 'flash-messages.html' %}
-<br>
-<a href="{{url_for('teachers.dashboard')}}" class="green-button">بازگشت</a>
-<form action="" method="POST" dir="auto">
+<br/>
+<a class="blue-button" href="{{url_for('teachers.dashboard')}}">بازگشت</a>
+<form action="" dir="auto" method="POST">
     {{ form.csrf_token }}
     {{ form.azmoon_name.label }}: {{ form.azmoon_name }}
-    <br>
+    <br/>
     {{ form.users.label }} (نام کاربری ها را با اینتر جدا کنید): {{ form.users }}
-    <br>
+    <br/>
     {{ form.is_available.label }}: {{ form.is_available }}
-    <br>
-    <input type="submit" value="تغییر اطلاعات آزمون">
+    <br/>
+<input type="submit" value="تغییر اطلاعات آزمون" class="green-button"/>
 </form>
-</body>
-</html>
+    {% endblock %}
+    

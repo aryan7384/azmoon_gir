@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
-    <meta name="viewport" content="width:content-based,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2KP0CTR43K"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2KP0CTR43K');
+    </script>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -12,5 +24,15 @@
     {% include 'flash-messages.html' %}
     {% block content %}
     {% endblock %}
+    <script>
+        const azmoonNav = document.getElementById("azmoon-nav");
+        const azmoonMenu = document.getElementById("azmoon-menu");
+
+        function azmoonOpenMenu() {
+            azmoonNav.classList.toggle("active");
+            azmoonMenu.classList.toggle("active");
+        }
+        
+    </script>
 </body>
 </html>

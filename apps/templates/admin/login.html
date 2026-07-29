@@ -1,15 +1,11 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>صفحه ورود به حساب کاربری</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+{% block title %}
+	ورود به پنل ادمین
+{% endblock %}
+
+{% block content %}
 <h1>صفحه ورود به حساب کاربری</h1>
-{% include 'flash-messages.html' %}
 <form method="post" action="">
     {{ form.csrf_token }}
     رمز عبور:
@@ -17,5 +13,4 @@
     <br>
     <input type="submit" value="ورود">
 </form>
-</body>
-</html>
+{% endblock %}

@@ -1,21 +1,16 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>ثیت گزینه جدید</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='user.css')}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-{% include 'flash-messages.html' %}
-<a href="{{url_for('teachers.questions', id=exam_id)}}" class="green-button">بازگشت</a>
-<form action="" method="POST" novalidate="novalidate" dir="auto">
+{% extends "base.html" %}
+
+    {% block title %}ثیت گزینه جدید{% endblock %}
+
+    {% block content %}
+<a href="{{url_for('teachers.questions', id=exam_id)}}" class="blue-button" >بازگشت</a>
+<form action="" dir="auto" method="POST" novalidate="novalidate">
     {{ form.csrf_token }}
     {{ form.text.label }}: {{ form.text }}
-    <br>
+    <br/>
     {{ form.is_correct.label }}: {{ form.is_correct }}
-    <br>
-    <input type="submit" value="ثبت گزینه">
+    <br/>
+<input type="submit" value="ثبت گزینه" class="green-button"/>
 </form>
-</body>
-</html>
+    {% endblock %}
+    

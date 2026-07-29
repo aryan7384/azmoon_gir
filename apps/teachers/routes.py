@@ -11,8 +11,13 @@ from json import dumps
 from socket import gaierror
 from uuid import uuid4
 from pathlib import Path
+import redis
+
 
 dotenv.load_dotenv()
+
+r = redis.Redis(host="localhost", port=6379, db=0,
+                decode_responses=True)
 
 blueprint = Blueprint('teachers', __name__)
 
@@ -122,6 +127,15 @@ def dashboard():
             )
         states.extend(exam_states_dict)
 
+    if r.get("openai_rate_limit") == "1":
+        remaining = "<div style='background-color: red; color: white; border-radius: 3px; width: 200px;'>موجودی شما کافی نیست. در اسرع وقت موجودی خود را افزایش دهید.</div>"
+
+    elif r.get("openai_rate_limit") == "0":
+        remaining = ""
+
+    else:
+        remaining = ""
+
     return render_template("teachers/teacher-panel.html",
                            exams=exams,
                            users=users,
@@ -129,7 +143,8 @@ def dashboard():
                            answers=answers,
                            results=results,
                            states=states,
-                           round_function=round)
+                           round_function=round,
+                           remaining=remaining)
 
 
 @blueprint.route("/teacher/update-password", methods=['GET', 'POST'])
@@ -193,7 +208,7 @@ def register_azmoon():
         flash("آزمون جدید ثبت شد.")
         return redirect(url_for("teachers.dashboard"))
 
-    students = dumps(list(map(lambda user: user.username, User.query.where(User.teacher_id == teacher.id).all())))
+    students = list(map(lambda user: user.username, User.query.where(User.teacher_id == teacher.id).all()))
     return render_template("teachers/register-exam.html",
                            form=form,
                            students_json=students)
@@ -434,7 +449,6 @@ def questions(id):
         choices = {}
         for i in questions:
             choices[i.id] = RealOption.query.filter_by(question_id=i.id).all()
-        # tashrihi question!
 
     else:
         questions = DescQuestion.query.filter_by(azmoon_id=id).all()
@@ -695,8 +709,7 @@ def add_desc(exam_id):
             db.session.add(new_q)
             db.session.commit()
             flash("سوال با موفقیت اضافه شد.")
-            return redirect(url_for("teachers.questions", id=exam_id,
-                                    path = Path(current_app.config["UPLOAD_DIR"])))
+            return redirect(url_for("teachers.questions", id=exam_id))
         
         else:
             new_q = DescQuestion(
@@ -724,7 +737,7 @@ def delete_desc_question(q_id):
     teacher = Teacher.query.filter_by(username=session['teacher_username']).first()
     exam = Azmoon.query.filter_by(id=question.azmoon_id,
                                   teacher_id=teacher.id).first()
-    
+
     if not exam:
         flash("این سوال برای شما نیست.")
         return redirect(url_for("teachers.dashboard"))
@@ -800,14 +813,10 @@ def uploaded_file(filename):
         filename
     )
 
-@blueprint.route("/teachers/logout", methods=["POST"])
+@blueprint.route("/teachers/logout", methods=["GET", "POST"])
 def log_out():
     if result := check_teacher_logged_in():
         return result
-    
-    if session.get('csrf_token') != request.form['csrf_token']:
-        flash("CSRF تایید نشد.")
-        return redirect(url_for('teachers.dashboard'))
     
     del session["teacher_username"]
     flash("با موفقیت خارج شدید.")

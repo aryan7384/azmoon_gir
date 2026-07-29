@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>مدیریت معلمان</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
+{% extends "base.html" %}
+{% block title %}مدیریت معلمان{% endblock %}
+{% block content %}
         <h1>ثبت، حذف یا تفییر معلمان</h1>
         {% include 'flash-messages.html' %}
-        <a href="{{url_for('admin.admin_homepage')}}" style="background-color: blue; color: white;">بازگشت</a>
+        <a href="{{url_for('admin.admin_homepage')}}" class="blue-button">بازگشت</a>
         <div>
-            <a href="{{ url_for('admin.register_teacher') }}">ثبت معلم جدید</a>
+            <a href="{{ url_for('admin.register_teacher') }}" class="green-button">ثبت معلم جدید</a>
             <section>
                 <h2>لیست معلمان</h2>
                 <hr>
@@ -28,14 +23,14 @@
                             <form method="post" action="{{ url_for('admin.remove_teacher',
                                     teacher_id=teacher.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                                <input type="submit" value="حذف معلم">
+                                <input type="submit" value="حذف معلم" class="red-button">
                             </form>
                             <form method="post" action="{{ url_for('admin.modify_teacher',
                                     teacher_id=teacher.id) }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                 <label for="limit">محدودیت دانش اموزان (برای برداشتن محدودیت عدد <span style="direction: ltr;">-1</span> را وارد کنید): </label>
                                 <input type="number" name="limit" value="{{ teacher['limit'] }}" id="limit" style="direction: ltr; max-width: 300px;" min="-1">
-                                <input type="submit" value="تغییر محدودیت">
+                                <input type="submit" value="تغییر محدودیت" class="red-button">
                             </form>
                         </div>
                     {% endfor %}
@@ -44,5 +39,4 @@
                 {% endif %}
             </section>
         </div>
-    </body>
-</html>
+{% endblock %}

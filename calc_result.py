@@ -8,6 +8,9 @@ from apps.database import db
 
 dotenv.load_dotenv()
 
+key = os.getenv("OPENAI_API_KEY")
+print("KEY EXISTS:", key is not None)
+print("KEY LENGTH:", len(key) if key else 0)
 client = OpenAI(base_url=os.getenv("OPENAI_BASE_URL"),
                 api_key=os.getenv("OPENAI_API_KEY"))
 
