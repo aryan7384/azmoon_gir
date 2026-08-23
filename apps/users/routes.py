@@ -84,7 +84,7 @@ def dashboard():
     username = session.get("username")
     if not username:
         flash("لطفا وارد حساب کاربری شوید.", "info")
-        return redirect(url_for('home.home'))
+        return redirect(url_for('users.login'))
 
     if not get_user(username):
         flash("لطفا مجدد وارد شوید.", "info")
