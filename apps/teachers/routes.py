@@ -487,7 +487,7 @@ def add_question(exam_id):
         if RealQuestion.query.filter_by(title=form.title.data,
                                         azmoon_id=exam.id).first():
             flash("عنوان تکراری است.")
-            return redirect(url_for('teachers.add_question', id=exam_id))
+            return redirect(url_for('teachers.add_question', exam_id=exam_id))
         new_question = RealQuestion(title=form.title.data,
                                     azmoon_id=exam.id)
         db.session.add(new_question)
