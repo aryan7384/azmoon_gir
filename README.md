@@ -1,8 +1,8 @@
-# AzmoonGir
+# AzmoonGir (Azmoon-yar)
 
 An open-source online examination platform built with Flask.
 
-AzmoonGir is a web-based examination system designed for schools, teachers, and educational institutions. It supports both multiple-choice and descriptive exams, automatic grading, AI-assisted evaluation of descriptive answers, student result analysis, and a complete teacher administration panel.
+Azmoon-yar is a web-based examination system designed for schools, teachers, and educational institutions. It supports both multiple-choice and descriptive exams, automatic grading, AI-assisted evaluation of descriptive answers, student result analysis, and a complete teacher administration panel.
 
 ---
 
@@ -73,7 +73,7 @@ project/
 
 ## Installation
 
-Follow these steps to run azmoon_gir locally.
+Follow these steps to run azmoon-yar locally.
 
 ---
 
