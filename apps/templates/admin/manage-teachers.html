@@ -2,7 +2,6 @@
 {% block title %}مدیریت معلمان{% endblock %}
 {% block content %}
         <h1>ثبت، حذف یا تفییر معلمان</h1>
-        {% include 'flash-messages.html' %}
         <a href="{{url_for('admin.admin_homepage')}}" class="blue-button">بازگشت</a>
         <div>
             <a href="{{ url_for('admin.register_teacher') }}" class="green-button">ثبت معلم جدید</a>
