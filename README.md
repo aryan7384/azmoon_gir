@@ -178,7 +178,7 @@ flask --app run run
 * [ ] Export results to PDF
 * [ ] Question bank
 * [ ] Multi-language support
-* [ ] Mobile-friendly UI improvements
+* [x] Mobile-friendly UI improvements
 
 ---
 
