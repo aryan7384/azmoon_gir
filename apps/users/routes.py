@@ -44,7 +44,7 @@ def calculate_result(user):
             RealOption.is_correct == True
         ).first()
 
-        if selected_option == true_answer.id:
+        if selected_option == (true_answer and true_answer.id):
             score += 100 / total_questions
         
         else:
@@ -381,7 +381,7 @@ def result_for(id_):
             results_for_user.append({
                 "question": q.title,
                 "answer": option.text,
-                "is_true": "t" if option.id == correct_option.id else "f"
+                "is_true": "t" if option.id == (correct_option and correct_option.id) else "f"
             })
 
     else:
